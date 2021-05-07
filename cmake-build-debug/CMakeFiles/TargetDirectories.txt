@@ -1,0 +1,3 @@
+/Users/acco/Desktop/42Cursus/hugeshell/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/acco/Desktop/42Cursus/hugeshell/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/acco/Desktop/42Cursus/hugeshell/cmake-build-debug/CMakeFiles/hugeshell.dir

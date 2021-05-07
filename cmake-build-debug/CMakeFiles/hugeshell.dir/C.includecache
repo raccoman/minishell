@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../headers/color.h
+
+../headers/minishell.h
+unistd.h
+-
+stdio.h
+-
+termios.h
+-
+color.h
+../headers/color.h
+libft.h
+../headers/libft.h
+
+../libraries/libft/libft.h
+errno.h
+-
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+stdarg.h
+-
+
+/Users/acco/Desktop/42Cursus/hugeshell/main.c
+minishell.h
+/Users/acco/Desktop/42Cursus/hugeshell/minishell.h
+
+/Users/acco/Desktop/42Cursus/hugeshell/sources/minishell.c
+minishell.h
+/Users/acco/Desktop/42Cursus/hugeshell/sources/minishell.h
+
+/Users/acco/Desktop/42Cursus/hugeshell/sources/parser.c
+minishell.h
+/Users/acco/Desktop/42Cursus/hugeshell/sources/minishell.h
+
