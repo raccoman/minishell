@@ -27,17 +27,17 @@ void	handle_key(t_minishell *minishell, t_key key)
 {
 	if (key == KEY_LEFT)
 	{
-		if (minishell->cursor == 0)
+		if (minishell->cursor == 0) //TODO: far partire un suono
 			return;
 		minishell->cursor--;
-		printf("\033[1D");
+		printf("\033[1D"); //Muove il cursore uno slot indietro
 	}
 	else if (key == KEY_RIGHT)
 	{
-		if (minishell->cursor == ft_strlen(minishell->input))
+		if (minishell->cursor == ft_strlen(minishell->input)) //TODO: far partire un suono
 			return;
 		minishell->cursor++;
-		printf("\033[1C");
+		printf("\033[1C"); //Muove il cursore uno slot avanti
 	}
 	else if (key == KEY_ENTER)
 	{

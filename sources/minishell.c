@@ -54,6 +54,6 @@ void	get_input(t_minishell *minishell)
 		return;
 	}
 	minishell->input = ft_insert(minishell->input, c, minishell->cursor);
-	printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input);
-	update_cursor(minishell);
+	printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input); //Questo a spostato alla fine il cursore
+	update_cursor(minishell); //Incremento cursor, e lo rimetto nella giusta posizione
 }
