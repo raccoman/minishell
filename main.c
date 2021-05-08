@@ -2,6 +2,7 @@
 
 void	watermark()
 {
+	printf("\e[1;1H\e[2J");
 	printf("\n" CC_CYN
 		   "███╗   ███╗ █████╗ ██╗  ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     \n"
 		   "████╗ ████║██╔══██╗╚██╗██╔╝██║██╔════╝██║  ██║██╔════╝██║     ██║     \n"
@@ -24,9 +25,11 @@ int	main(int argc, char *argv[], char *env[])
 	while (minishell.running)
 	{
 		ft_fflush(stdout);
-		tcsetattr(0, TCSAFLUSH, &minishell.our_cfg);
+		//tcsetattr(0, TCSAFLUSH, &minishell.our_cfg);
 		get_input(&minishell);
-		tcsetattr(0, TCSAFLUSH, &minishell.sys_cfg);
+		handle_enter(&minishell);
+		// hai premuto enter
+		//tcsetattr(0, TCSAFLUSH, &minishell.sys_cfg);
 	}
 	terminate(&minishell);
 	return (0);

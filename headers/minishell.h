@@ -4,10 +4,35 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <termios.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+
 # include "color.h"
 # include "../libraries/libft/libft.h"
 
 extern int	errno;
+
+typedef struct	s_history
+{
+	char				*cmd_line;
+	struct s_history	*prec;
+	struct s_history	*next;
+}						t_history;
+
+typedef	struct	s_simple_cmd
+{
+	char	*path; // serve per i NON-builtin, bisognerá cercare la loro posizione nel file_system con lstat e chiamare execve con il path corretto
+	char	**arguments; // arguments[0] é il comando in se
+	struct s_simple_cmd	*next;
+}			t_simple_cmd;
+
+typedef struct	s_command
+{
+	char			*infile;
+	char			*outfile;
+	int				append;
+	t_simple_cmd	*s_commands;
+}	t_command;
 
 typedef struct	s_minishell
 {
@@ -17,6 +42,8 @@ typedef struct	s_minishell
 	char			**main_env;
 	char			*input;
 	int				cursor;
+	t_history		*history;
+	t_command		*command;
 }				t_minishell;
 
 typedef enum	e_key
@@ -27,14 +54,27 @@ typedef enum	e_key
 	KEY_DOWN,
 	KEY_RIGHT,
 	KEY_LEFT,
+	KEY_CANC
 }				t_key;
 
 void	configure(t_minishell *minishell, char *env[]);
 void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
+
 void	parse(t_minishell *minishell);
+void	parse_input(t_minishell *minishell);
+void    executor(t_command *command);
 
 t_key	get_key(char c);
 void	handle_key(t_minishell *minishell, t_key key);
+void	handle_enter(t_minishell *minishell);
+
+void	clear_history(t_history *history);
+void	init_history(t_minishell *minishell);
+void	add_history(t_minishell *minishell, char *cmd_line);
+
+void	add_command(t_command *command, t_simple_cmd *s_cmd);
+int		calc_token_len(char *str);
+void	add_argument(t_simple_cmd *s_cmd, char *new_arg);
 
 #endif

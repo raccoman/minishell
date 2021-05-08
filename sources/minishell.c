@@ -14,13 +14,20 @@ void	configure(t_minishell *minishell, char *env[])
 {
 	minishell->main_env = env;
 	minishell->running = 1;
+	init_history(minishell);
 	minishell->input = NULL;
 	minishell->cursor = 0;
 	configure_termios(minishell);
+	minishell->command = malloc(sizeof(t_command));
+	minishell->command->infile = NULL;
+	minishell->command->outfile = NULL;
+	minishell->command->append = 0;
+	minishell->command->s_commands = NULL;
 }
 
 void	terminate(t_minishell *minishell)
 {
+	clear_history(minishell->history);
 	if (minishell->input)
 	{
 		free(minishell->input);
@@ -46,14 +53,22 @@ void	get_input(t_minishell *minishell)
 	char	c;
 	t_key	key;
 
-	read(0, &c, 1);
-	key = get_key(c);
-	if (key != KEY_NONE)
+	while (1)
 	{
-		handle_key(minishell, key);
-		return;
+		tcsetattr(0, TCSAFLUSH, &minishell->our_cfg);
+		read(0, &c, 1);
+		key = get_key(c);
+		tcsetattr(0, TCSAFLUSH, &minishell->sys_cfg);
+		if (key == KEY_ENTER)
+			break ;
+		if (key != KEY_NONE)
+			handle_key(minishell, key);
+		else
+		{
+			minishell->input = ft_insert(minishell->input, c, minishell->cursor);
+			printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input); //Questo a spostato alla fine il cursore
+			update_cursor(minishell); //Incremento cursor, e lo rimetto nella giusta posizione
+		}
+		ft_fflush(stdout);
 	}
-	minishell->input = ft_insert(minishell->input, c, minishell->cursor);
-	printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input); //Questo a spostato alla fine il cursore
-	update_cursor(minishell); //Incremento cursor, e lo rimetto nella giusta posizione
 }
