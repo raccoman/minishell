@@ -6,6 +6,7 @@
 # include <termios.h>
 # include <sys/stat.h>
 # include <fcntl.h>
+# include <limits.h>
 
 # include "color.h"
 # include "../libraries/libft/libft.h"
@@ -39,7 +40,8 @@ typedef struct	s_minishell
 	struct termios	our_cfg;
 	struct termios	sys_cfg;
 	int				running;
-	char			**main_env;
+	t_list			*main_env;
+	t_list			*session_env;
 	char			*input;
 	int				cursor;
 	t_history		*history;
@@ -63,7 +65,8 @@ void	get_input(t_minishell *minishell);
 
 void	parse(t_minishell *minishell);
 void	parse_input(t_minishell *minishell);
-void    executor(t_command *command);
+void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell);
+void    executor(t_minishell *minishell, t_command *command);
 
 t_key	get_key(char c);
 void	handle_key(t_minishell *minishell, t_key key);
@@ -76,5 +79,15 @@ void	add_history(t_minishell *minishell, char *cmd_line);
 void	add_command(t_command *command, t_simple_cmd *s_cmd);
 int		calc_token_len(char *str);
 void	add_argument(t_simple_cmd *s_cmd, char *new_arg);
+void	clear_commands(t_command *command);
+
+t_list	*find_env(t_list *env, char *name);
+int		is_assign(const char *str);
+
+void    handle_exit(t_minishell *minishell);
+void    handle_pwd(t_simple_cmd *curr);
+void	handle_echo(t_simple_cmd *curr);
+void	handle_env(t_minishell *minishell);
+void	handle_assign(t_minishell *minishell, t_simple_cmd *curr);
 
 #endif

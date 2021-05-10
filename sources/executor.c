@@ -10,6 +10,7 @@ void	clear_commands(t_command *command)
 	while (list_copy)
 	{
 		i = 0;
+		// todo : liberare simple_cmd->path se lo usiamo
 		while (list_copy->arguments[i])
 			free(list_copy->arguments[i++]);
 		free(list_copy->arguments);
@@ -31,14 +32,38 @@ void	clear_commands(t_command *command)
 	command->append = 0;
 }
 
-void    executor(t_command *command)
+void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
+{
+	int	i;
+
+	i = 0;
+	if (!ft_strcmp(name, "exit") && (i = 1))
+		handle_exit(minishell);
+	if (!ft_strcmp(name, "pwd") && (i = 1))
+		handle_pwd(curr);
+	if (!ft_strcmp(name, "echo") && (i = 1))
+		handle_echo(curr);
+	if (!ft_strcmp(name, "env") && (i = 1))
+		handle_env(minishell);
+	if (is_assign(name) && (i = 1))
+		handle_assign(minishell, curr);
+	if (!i)
+		printf(CC_RESET "%s:" CC_RED " command not found\n", name);
+}
+
+void    executor(t_minishell *minishell, t_command *command)
 {
 		
-	/*t_simple_cmd	*curr;
-	int				i;
+	t_simple_cmd	*curr;
+	//int				i;
 
 	curr = command->s_commands;
-	printf("\n");
+	while (curr)
+	{
+		dispatcher(curr->arguments[0], curr, minishell);
+		curr = curr->next;
+	}
+	/*printf("\n");
 	while (curr)
 	{
 		i = 0;

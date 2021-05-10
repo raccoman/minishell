@@ -10,9 +10,20 @@ void	configure_termios(t_minishell *minishell)
 	minishell->our_cfg.c_cc[VTIME] = 0;
 }
 
-void	configure(t_minishell *minishell, char *env[])
+void	configure_env(t_minishell *minishell, char	**env)
 {
-	minishell->main_env = env;
+	minishell->main_env = NULL;
+	while (*env)
+	{
+		ft_lstadd_back(&minishell->main_env, ft_lstnew(ft_strdup(*env)));
+		env++;
+	}
+	minishell->session_env = NULL;
+}
+
+void	configure(t_minishell *minishell, char **env)
+{
+	configure_env(minishell, env);
 	minishell->running = 1;
 	init_history(minishell);
 	minishell->input = NULL;

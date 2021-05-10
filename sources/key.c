@@ -30,6 +30,7 @@ void	handle_enter(t_minishell *minishell)
 	char	**single_input;
 	int		i;
 
+	printf("\n");
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
@@ -40,14 +41,14 @@ void	handle_enter(t_minishell *minishell)
 		{
 			minishell->input = single_input[i++];
 			parse_input(minishell);
-			executor(minishell->command);
+			executor(minishell, minishell->command);
 			free(minishell->input);
 		}
 		free(single_input);
 		minishell->input = NULL;
 	}
 	minishell->cursor = 0;
-	printf(CC_RESET "\n" CC_CYN "maxishell $> ");
+	printf(CC_CYN "maxishell $> ");
 }
 
 void	handle_key(t_minishell *minishell, t_key key)
