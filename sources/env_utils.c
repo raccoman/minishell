@@ -40,3 +40,21 @@ t_list	*find_env(t_list *env, char *name)
 	}
 	return (NULL);
 }
+
+char	*get_env_value(t_minishell *minishell, char *name)
+{
+	t_list	*env;
+	int		i;
+
+	env = find_env(minishell->main_env, name);
+	if (!env)
+	{
+		env = find_env(minishell->session_env, name);
+		if (!env)
+			return (NULL);
+	}
+	i = 0;
+	while (((char *)env->data)[i] != '=')
+		i++;
+	return (((char *)env->data) + (i + 1));
+}

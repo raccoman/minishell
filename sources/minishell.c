@@ -21,6 +21,17 @@ void	configure_env(t_minishell *minishell, char	**env)
 	minishell->session_env = NULL;
 }
 
+void	handle_signal(int signal)
+{
+	(void)signal;
+	g_minishell->cursor = 0;
+	if (g_minishell->input)
+		free(g_minishell->input);
+	g_minishell->input = NULL;
+	printf("\n" CC_CYN "maxishell $> " CC_MAG);
+	ft_fflush(stdout);
+}
+
 void	configure(t_minishell *minishell, char **env)
 {
 	configure_env(minishell, env);
@@ -34,6 +45,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->command->outfile = NULL;
 	minishell->command->append = 0;
 	minishell->command->s_commands = NULL;
+	signal(SIGINT, handle_signal);
 }
 
 void	terminate(t_minishell *minishell)
@@ -44,19 +56,7 @@ void	terminate(t_minishell *minishell)
 		free(minishell->input);
 		minishell->input = NULL;
 	}
-}
-
-void	update_cursor(t_minishell *minishell)
-{
-	int	length;
-
-	minishell->cursor++;
-	length = ft_strlen(minishell->input);
-	while (minishell->cursor < length)
-	{
-		printf("\033[1D");
-		length--;
-	}
+	free(minishell);
 }
 
 void	get_input(t_minishell *minishell)
@@ -77,8 +77,7 @@ void	get_input(t_minishell *minishell)
 		else
 		{
 			minishell->input = ft_insert(minishell->input, c, minishell->cursor);
-			printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input); //Questo a spostato alla fine il cursore
-			update_cursor(minishell); //Incremento cursor, e lo rimetto nella giusta posizione
+			prompt(minishell, "\r");
 		}
 		ft_fflush(stdout);
 	}

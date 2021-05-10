@@ -16,7 +16,7 @@ void	clear_commands(t_command *command)
 		free(list_copy->arguments);
 		tmp = list_copy->next;
 		free(list_copy);
-		list_copy = list_copy->next;
+		list_copy = tmp;
 	}
 	command->s_commands = NULL;
 	if (command->infile)
@@ -45,32 +45,28 @@ void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 		handle_echo(curr);
 	if (!ft_strcmp(name, "env") && (i = 1))
 		handle_env(minishell);
+	if (!ft_strcmp(name, "export") && (i = 1))
+		handle_export(minishell, curr);
+	if (!ft_strcmp(name, "cd") && (i = 1))
+		handle_cd(minishell, curr);
+	if (!ft_strcmp(name, "unset") && (i = 1))
+		handle_unset(minishell, curr);
 	if (is_assign(name) && (i = 1))
 		handle_assign(minishell, curr);
 	if (!i)
-		printf(CC_RESET "%s:" CC_RED " command not found\n", name);
+		printf(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", name);
 }
 
 void    executor(t_minishell *minishell, t_command *command)
 {
-		
 	t_simple_cmd	*curr;
-	//int				i;
 
 	curr = command->s_commands;
 	while (curr)
 	{
+		expander(minishell, curr);
 		dispatcher(curr->arguments[0], curr, minishell);
 		curr = curr->next;
 	}
-	/*printf("\n");
-	while (curr)
-	{
-		i = 0;
-		while (curr->arguments[i])
-			printf("%s ", curr->arguments[i++]);
-		printf("\n");
-		curr = curr->next;
-	}*/
 	clear_commands(command);  
 }

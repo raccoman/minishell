@@ -7,6 +7,8 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <string.h>
+# include <signal.h>
 
 # include "color.h"
 # include "../libraries/libft/libft.h"
@@ -52,21 +54,26 @@ typedef enum	e_key
 {
 	KEY_NONE,
 	KEY_ENTER,
+	KEY_TAB,
 	KEY_UP,
 	KEY_DOWN,
 	KEY_RIGHT,
 	KEY_LEFT,
-	KEY_CANC
+	KEY_CANCEL
 }				t_key;
+
+t_minishell	*g_minishell;
 
 void	configure(t_minishell *minishell, char *env[]);
 void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 
-void	parse(t_minishell *minishell);
+
+void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);
 void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell);
 void    executor(t_minishell *minishell, t_command *command);
+void	expander(t_minishell *minishell, t_simple_cmd *curr);
 
 t_key	get_key(char c);
 void	handle_key(t_minishell *minishell, t_key key);
@@ -83,11 +90,19 @@ void	clear_commands(t_command *command);
 
 t_list	*find_env(t_list *env, char *name);
 int		is_assign(const char *str);
+int		cmd_cmp(char *s1, char *s2);
+char	*get_env_value(t_minishell *minishell, char *name);
 
 void    handle_exit(t_minishell *minishell);
 void    handle_pwd(t_simple_cmd *curr);
 void	handle_echo(t_simple_cmd *curr);
 void	handle_env(t_minishell *minishell);
 void	handle_assign(t_minishell *minishell, t_simple_cmd *curr);
+void	single_assign(t_minishell *minishell, char *assign);
+void	handle_export(t_minishell *minishell, t_simple_cmd *curr);
+void	handle_cd(t_minishell *minishell, t_simple_cmd *curr);
+void	single_export(t_minishell *minishell, char *export);
+void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
+
 
 #endif

@@ -1,8 +1,24 @@
 #include "headers/minishell.h"
 
+void	prompt(t_minishell *minishell, const char *prefix)
+{
+	int	length;
+
+	printf("%c[2K", 27);
+	printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG "%s", prefix, minishell->input);
+
+	minishell->cursor++;
+	length = ft_strlen(minishell->input);
+	while (minishell->cursor < length)
+	{
+		printf("\033[1D");
+		length--;
+	}
+}
+
 void	watermark()
 {
-	printf("\e[1;1H\e[2J");
+	printf("%c[1;1H%c[2J", 27, 27);
 	printf("\n" CC_CYN
 		   "███╗   ███╗ █████╗ ██╗  ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     \n"
 		   "████╗ ████║██╔══██╗╚██╗██╔╝██║██╔════╝██║  ██║██╔════╝██║     ██║     \n"
@@ -15,22 +31,19 @@ void	watermark()
 
 int	main(int argc, char *argv[], char *env[])
 {
-	t_minishell	minishell;
+	g_minishell = malloc(sizeof(t_minishell));
 
 	(void)argc;
 	(void)argv;
-	configure(&minishell, env);
+	configure(g_minishell, env);
 	watermark();
-	printf(CC_CYN "maxishell $> " CC_MAG);
-	while (minishell.running)
+	printf(CC_RESET CC_CYN "maxishell $> " CC_MAG);
+	while (g_minishell->running)
 	{
 		ft_fflush(stdout);
-		//tcsetattr(0, TCSAFLUSH, &minishell.our_cfg);
-		get_input(&minishell);
-		handle_enter(&minishell);
-		// hai premuto enter
-		//tcsetattr(0, TCSAFLUSH, &minishell.sys_cfg);
+		get_input(g_minishell);
+		handle_enter(g_minishell);
 	}
-	terminate(&minishell);
+	terminate(g_minishell);
 	return (0);
 }

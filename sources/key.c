@@ -2,10 +2,12 @@
 
 t_key	get_key(char c)
 {
+	if (c == 9)
+		return (KEY_TAB);
 	if (c == 10)
 		return (KEY_ENTER);
 	if (c == 127)
-		return (KEY_CANC);
+		return (KEY_CANCEL);
 	if (c == '\x1b')
 	{
 		read(0, &c, 1);
@@ -48,22 +50,19 @@ void	handle_enter(t_minishell *minishell)
 		minishell->input = NULL;
 	}
 	minishell->cursor = 0;
-	printf(CC_CYN "maxishell $> ");
+	printf(CC_RESET CC_CYN "maxishell $>" CC_MAG " ");
 }
 
 void	handle_key(t_minishell *minishell, t_key key)
 {
-	int	tmp_len;
-
-	tmp_len = 0;
-	if (key == KEY_CANC) // TODO: non funzia con il cursore che non si trova al fondo dell'input
+	if (key == KEY_CANCEL)
 	{
-		if (minishell->cursor == 0) //TODO: far partire un suono
+		if (minishell->cursor == 0)
 			return;
-		minishell->input[ft_strlen(minishell->input) - 1] = 0;
-		printf("%c[2K", 27);
-		printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input);
 		minishell->cursor--;
+		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
+		minishell->cursor--;
+		prompt(minishell, "\r");
 	}
 	else if (key == KEY_LEFT)
 	{
@@ -86,7 +85,6 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->history = minishell->history->prec;
 		if (minishell->input)
 		{
-			tmp_len = ft_strlen(minishell->input);
 			free(minishell->input);
 		}
 		minishell->input = ft_strdup(minishell->history->cmd_line);
@@ -98,15 +96,13 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->history = minishell->history->next;
 		if (minishell->input)
 		{
-			tmp_len = ft_strlen(minishell->input);
 			free(minishell->input);
 		}
 		minishell->input = ft_strdup(minishell->history->cmd_line);
 	}
 	if (key == KEY_UP || key == KEY_DOWN)
 	{
-		printf("%c[2K", 27);
-		printf("\r" CC_CYN "maxishell $> " CC_MAG "%s", minishell->input);
 		minishell->cursor = ft_strlen(minishell->input);
+		prompt(minishell, "\r");
 	}
 }

@@ -7,11 +7,12 @@ void    clear_all(t_minishell *minishell)
     clear_commands(minishell->command);
     ft_lstclear(&minishell->main_env);
     ft_lstclear(&minishell->session_env);
+    free(minishell);
 }
 
 void    handle_exit(t_minishell *minishell)
 {
 	printf(CC_WHT "Bye bye\n" CC_RESET);
-    clear_all(minishell);
+	clear_all(minishell);
 	exit(0);
 }

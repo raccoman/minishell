@@ -52,18 +52,11 @@ void	redirect_cmd(t_minishell *minishell, t_simple_cmd *curr)
 	dispatcher(curr->arguments[0], curr, minishell);
 }
 
-void	handle_assign(t_minishell *minishell, t_simple_cmd *curr)
+void	single_assign(t_minishell *minishell, char *assign)
 {
-	t_list	*env;
 	char	*var_name;
-	char	*assign;
+	t_list	*env;
 
-	if (!check_assigns(curr->arguments))
-	{
-		redirect_cmd(minishell, curr);
-		return ;
-	}
-	assign = ft_strdup(*(curr->arguments));
 	var_name = env_name(assign);
 	env = find_env(minishell->main_env, var_name);
 	if (env)
@@ -80,4 +73,38 @@ void	handle_assign(t_minishell *minishell, t_simple_cmd *curr)
 	}
 	else
 		ft_lstadd_back(&minishell->session_env, ft_lstnew(assign));
+}
+
+void	handle_assign(t_minishell *minishell, t_simple_cmd *curr)
+{
+	char	*assign;
+	int 	i;
+
+	if (!check_assigns(curr->arguments))
+	{
+		redirect_cmd(minishell, curr);
+		return ;
+	}
+	i = -1;
+	while (curr->arguments[++i])
+	{
+		assign = ft_strdup(curr->arguments[i]);
+		single_assign(minishell, assign);
+		/*var_name = env_name(assign);
+		env = find_env(minishell->main_env, var_name);
+		if (env)
+		{
+			free(env->data);
+			env->data = assign;
+			return ;
+		}
+		env = find_env(minishell->session_env, var_name);
+		if (env)
+		{
+			free(env->data);
+			env->data = assign;
+		}
+		else
+			ft_lstadd_back(&minishell->session_env, ft_lstnew(assign));*/
+	}
 }
