@@ -48,11 +48,13 @@ typedef struct	s_minishell
 	int				cursor;
 	t_history		*history;
 	t_command		*command;
+	pid_t			pid;
 }				t_minishell;
 
 typedef enum	e_key
 {
 	KEY_NONE,
+	KEY_EOF,
 	KEY_ENTER,
 	KEY_TAB,
 	KEY_UP,

@@ -1,2 +1,7 @@
 .idea/
 cmake-build-debug/
+objects/
+libraries/libft/*.o
+libraries/libft/libft.a
+minishell
+debug

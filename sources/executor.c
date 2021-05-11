@@ -55,7 +55,6 @@ void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 	t_simple_cmd	*curr;
 	int				fdin;
 	int				fdpipe[2];
-	int				pid;
 
 	curr = command->s_commands;
 	fdin = redirect_infile(command->infile, *tmp_stds, 0);
@@ -72,15 +71,16 @@ void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 			dup2(fdpipe[1], 1);
 			close(fdpipe[1]);
 		}
-		pid = fork();
-		if (!pid)
+		minishell->pid = fork();
+		if (!minishell->pid)
 		{
 			dispatcher(curr->arguments[0], curr, minishell);
 			exit(0);
 		}
 		curr = curr->next;
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(minishell->pid, NULL, 0);
+	minishell->pid = 0;
 }
 
 void	executor(t_minishell *minishell, t_command *command)

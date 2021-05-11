@@ -56,5 +56,6 @@ char	*ft_append(char *str, char c);
 char	*ft_insert(char *str, int c, int pos);
 char	*ft_remove_at(char *str, int pos);
 char    *ft_strmaxjoin(char **strings, char *c);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
 
 #endif

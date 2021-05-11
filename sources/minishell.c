@@ -3,9 +3,8 @@
 void	configure_termios(t_minishell *minishell)
 {
 	tcgetattr(0, &minishell->sys_cfg);
-	tcgetattr(0, &minishell->our_cfg);
-	minishell->our_cfg.c_iflag &= ~(IXON);
-	minishell->our_cfg.c_lflag &= ~(ECHO | ICANON |IEXTEN);
+	ft_memcpy(&minishell->our_cfg, &minishell->sys_cfg, sizeof(struct termios));
+	minishell->our_cfg.c_lflag &= ~(ECHO | ICANON);
 	minishell->our_cfg.c_cc[VMIN] = 1;
 	minishell->our_cfg.c_cc[VTIME] = 0;
 }
@@ -24,17 +23,21 @@ void	configure_env(t_minishell *minishell, char	**env)
 void	handle_signal(int signal)
 {
 	(void)signal;
-	g_minishell->cursor = 0;
-	if (g_minishell->input)
-		free(g_minishell->input);
-	g_minishell->input = NULL;
-	if (g_minishell->prompt)
+	if (signal == SIGINT)
 	{
-		free(g_minishell->prompt);
-		g_minishell->prompt = NULL;
+		g_minishell->cursor = 0;
+		if (g_minishell->input)
+			free(g_minishell->input);
+		g_minishell->input = NULL;
+		if (g_minishell->prompt) {
+			free(g_minishell->prompt);
+			g_minishell->prompt = NULL;
+		}
+		printf("\n" CC_CYN "maxishell $> " CC_MAG);
+		ft_fflush(stdout);
 	}
-	printf("\n" CC_CYN "maxishell $> " CC_MAG);
-	ft_fflush(stdout);
+	else if (signal == SIGQUIT && g_minishell->pid)
+		printf(CC_RED "Quit: 3" CC_RESET "\n" CC_MAG);
 }
 
 void	configure(t_minishell *minishell, char **env)
@@ -52,6 +55,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->command->append = 0;
 	minishell->command->s_commands = NULL;
 	signal(SIGINT, handle_signal);
+	signal(SIGQUIT, handle_signal);
 }
 
 void	terminate(t_minishell *minishell)
@@ -72,13 +76,13 @@ void	get_input(t_minishell *minishell)
 
 	while (1)
 	{
-		tcsetattr(0, TCSAFLUSH, &minishell->our_cfg);
+		tcsetattr(0, TCSANOW, &minishell->our_cfg);
 		read(0, &c, 1);
 		key = get_key(c);
-		tcsetattr(0, TCSAFLUSH, &minishell->sys_cfg);
+		tcsetattr(0, TCSANOW, &minishell->sys_cfg);
 		if (key == KEY_ENTER)
 			break ;
-		if (key != KEY_NONE)
+		else if (key != KEY_NONE)
 			handle_key(minishell, key);
 		else
 		{

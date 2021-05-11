@@ -2,6 +2,8 @@
 
 t_key	get_key(char c)
 {
+	if (c == 0x4)
+		return (KEY_EOF);
 	if (c == 9)
 		return (KEY_TAB);
 	if (c == 10)
@@ -79,33 +81,51 @@ void	handle_enter(t_minishell *minishell)
 
 void	handle_key(t_minishell *minishell, t_key key)
 {
+	if (key == KEY_EOF && (!minishell->input || !*minishell->input))
+	{
+		printf("exit\n");
+		handle_exit(minishell);
+		return ;
+	}
 	if (key == KEY_CANCEL)
 	{
 		if (minishell->cursor == 0)
+		{
+			printf("\a");
 			return;
+		}
 		minishell->cursor--;
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
 		prompt(minishell, "\r");
 	}
 	else if (key == KEY_LEFT)
 	{
-		if (minishell->cursor == 0) //TODO: far partire un suono
+		if (minishell->cursor == 0)
+		{
+			printf("\a");
 			return;
+		}
 		minishell->cursor--;
 		//printf("\033[1D"); //Muove il cursore uno slot indietro
 		printf("\b");
 	}
 	else if (key == KEY_RIGHT)
 	{
-		if (minishell->cursor == ft_strlen(minishell->input)) //TODO: far partire un suono
+		if (minishell->cursor == ft_strlen(minishell->input))
+		{
+			printf("\a");
 			return;
+		}
 		minishell->cursor++;
 		printf("\033[1C"); //Muove il cursore uno slot avanti
 	}
 	else if (key == KEY_UP)
 	{
-		if (!(minishell->history->prec)) //TODO: far partire un suono
-			return ;
+		if (!(minishell->history->prec))
+		{
+			printf("\a");
+			return;
+		}
 		minishell->history = minishell->history->prec;
 		if (minishell->input)
 		{
@@ -115,8 +135,11 @@ void	handle_key(t_minishell *minishell, t_key key)
 	}
 	else if (key == KEY_DOWN)
 	{
-		if (!(minishell->history->next)) //TODO: far partire un suono
-			return ;
+		if (!(minishell->history->next))
+		{
+			printf("\a");
+			return;
+		}
 		minishell->history = minishell->history->next;
 		if (minishell->input)
 		{

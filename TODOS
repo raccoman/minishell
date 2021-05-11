@@ -2,18 +2,12 @@ TODOS:
 
 - executor.c -> clear_commands : liberare simple_cmd->path se lo usiamo
 
-- key.c -> handle_key : far partire un suono quando arrivo alla fine della storia
-
 - parser.c -> parse_input : gestire '  " \
-
-- handle_export.c -> handle_export : gestire export senza argomenti
 
 - fare la history con i controcazzi (optional)
 
 - gestire le freccete fine/inzio riga e saltare di parola in parola
 
 - gestire $? (come caZo si fa se chiamo un comando non builtin :0)
-
-- gestire come cristo comanda gli interrupt ctrl-C, ctrl-D & ctrl-\
 
 - gestire comandi non builtin con execve
