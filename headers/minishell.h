@@ -44,6 +44,7 @@ typedef struct	s_minishell
 	t_list			*main_env;
 	t_list			*session_env;
 	char			*input;
+	char			*clipboard;
 	char			*prompt;
 	int				cursor;
 	t_history		*history;
@@ -55,6 +56,9 @@ typedef enum	e_key
 {
 	KEY_NONE,
 	KEY_EOF,
+	KEY_CTRL_X,
+	KEY_CTRL_P,
+	KEY_CTRL_U,
 	KEY_ENTER,
 	KEY_TAB,
 	KEY_UP,

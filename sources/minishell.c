@@ -45,6 +45,7 @@ void	configure(t_minishell *minishell, char **env)
 	configure_env(minishell, env);
 	minishell->running = 1;
 	init_history(minishell);
+	minishell->clipboard = NULL;
 	minishell->prompt = NULL;
 	minishell->input = NULL;
 	minishell->cursor = 0;

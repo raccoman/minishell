@@ -4,6 +4,7 @@ void	clear_all(t_minishell *minishell)
 {
 	free(minishell->input);
 	free(minishell->prompt);
+	free(minishell->clipboard);
 	clear_history(minishell->history);
 	clear_commands(minishell->command);
 	ft_lstclear(&minishell->main_env);

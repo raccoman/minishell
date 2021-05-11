@@ -2,6 +2,12 @@
 
 t_key	get_key(char c)
 {
+	if (c == '\x10')
+		return (KEY_CTRL_P);
+	if (c == '\x18')
+		return (KEY_CTRL_X);
+	if (c == '\x15')
+		return (KEY_CTRL_U);
 	if (c == 0x4)
 		return (KEY_EOF);
 	if (c == 9)
@@ -81,6 +87,46 @@ void	handle_enter(t_minishell *minishell)
 
 void	handle_key(t_minishell *minishell, t_key key)
 {
+	int	i;
+
+	if (key == KEY_CTRL_X) // Cut
+	{
+		if (minishell->input && *minishell->input)
+		{
+			minishell->clipboard = ft_strdup(minishell->input + minishell->cursor);
+			minishell->input[minishell->cursor] = 0;
+			prompt(minishell, "\r");
+			return ;
+		}
+		printf("\a");
+		return ;
+	}
+	if (key == KEY_CTRL_P) //Paste
+	{
+		if (minishell->clipboard)
+		{
+			i = -1;
+			while (minishell->clipboard[++i])
+			{
+				minishell->input = ft_insert(minishell->input, minishell->clipboard[i], minishell->cursor);
+				minishell->cursor++;
+			}
+			prompt(minishell, "\r");
+			return ;
+		}
+		printf("\a");
+		return ;
+	}
+	if (key == KEY_CTRL_U) //Copy
+	{
+		if (minishell->input && *minishell->input)
+		{
+			minishell->clipboard = ft_strdup(minishell->input + minishell->cursor);
+			return ;
+		}
+		printf("\a");
+		return ;
+	}
 	if (key == KEY_EOF && (!minishell->input || !*minishell->input))
 	{
 		printf("exit\n");
