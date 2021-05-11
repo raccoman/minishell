@@ -37,7 +37,6 @@ void	handle_cd(t_minishell *minishell, t_simple_cmd *curr)
 	char	**args;
 
 	args = &(curr->arguments[1]);
-	//if (is_empty(args))
 	if (!(*args))
 	{
 		if (!find_env(minishell->main_env, "HOME"))

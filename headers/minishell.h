@@ -9,6 +9,7 @@
 # include <limits.h>
 # include <string.h>
 # include <signal.h>
+# include <unistd.h>
 
 # include "color.h"
 # include "../libraries/libft/libft.h"
@@ -45,6 +46,7 @@ typedef struct	s_minishell
 	t_list			*main_env;
 	t_list			*session_env;
 	char			*input;
+	char			*prompt;
 	int				cursor;
 	t_history		*history;
 	t_command		*command;
@@ -93,9 +95,13 @@ int		is_assign(const char *str);
 int		cmd_cmp(char *s1, char *s2);
 char	*get_env_value(t_minishell *minishell, char *name);
 
+void	restore_stds(int *tmp_stds);
+void	redirect_outfile(char *outfile, int tmpout, int append);
+int		redirect_infile(char *infile, int tmpin, int single);
+
 void    handle_exit(t_minishell *minishell);
 void    handle_pwd(t_simple_cmd *curr);
-void	handle_echo(t_simple_cmd *curr);
+void	handle_echo(t_minishell *minishell, t_simple_cmd *curr);
 void	handle_env(t_minishell *minishell);
 void	handle_assign(t_minishell *minishell, t_simple_cmd *curr);
 void	single_assign(t_minishell *minishell, char *assign);

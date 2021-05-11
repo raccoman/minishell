@@ -1,37 +1,5 @@
 #include "minishell.h"
 
-void	clear_commands(t_command *command)
-{
-	int				i;
-	t_simple_cmd	*tmp;
-	t_simple_cmd	*list_copy;
-
-	list_copy = command->s_commands;
-	while (list_copy)
-	{
-		i = 0;
-		// todo : liberare simple_cmd->path se lo usiamo
-		while (list_copy->arguments[i])
-			free(list_copy->arguments[i++]);
-		free(list_copy->arguments);
-		tmp = list_copy->next;
-		free(list_copy);
-		list_copy = tmp;
-	}
-	command->s_commands = NULL;
-	if (command->infile)
-	{
-		free(command->infile);
-		command->infile = NULL;
-	}
-	if (command->outfile)
-	{
-		free(command->outfile);
-		command->outfile = NULL;
-	}
-	command->append = 0;
-}
-
 void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 {
 	int	i;
@@ -42,7 +10,7 @@ void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 	if (!ft_strcmp(name, "pwd") && (i = 1))
 		handle_pwd(curr);
 	if (!ft_strcmp(name, "echo") && (i = 1))
-		handle_echo(curr);
+		handle_echo(minishell, curr);
 	if (!ft_strcmp(name, "env") && (i = 1))
 		handle_env(minishell);
 	if (!ft_strcmp(name, "export") && (i = 1))
@@ -57,16 +25,62 @@ void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 		printf(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", name);
 }
 
-void    executor(t_minishell *minishell, t_command *command)
+void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_stds)
+{
+	t_simple_cmd	*cmd;
+
+	cmd = command->s_commands;
+	redirect_infile(command->infile, *tmp_stds, 1);
+	redirect_outfile(command->outfile, tmp_stds[1], command->append);
+	dispatcher(cmd->arguments[0], cmd, minishell);
+}
+
+void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 {
 	t_simple_cmd	*curr;
+	int				fdin;
+	int				fdpipe[2];
+	int				pid;
 
 	curr = command->s_commands;
+	fdin = redirect_infile(command->infile, *tmp_stds, 0);
 	while (curr)
 	{
-		expander(minishell, curr);
-		dispatcher(curr->arguments[0], curr, minishell);
+		dup2(fdin, 0);
+		close(fdin);
+		if (!curr->next)
+			redirect_outfile(command->outfile, tmp_stds[1], command->append);
+		else
+		{
+			pipe(fdpipe);
+			fdin = fdpipe[0];
+			dup2(fdpipe[1], 1);
+			close(fdpipe[1]);
+		}
+		pid = fork();
+		if (!pid)
+		{
+			dispatcher(curr->arguments[0], curr, minishell);
+			exit(0);
+		}
 		curr = curr->next;
 	}
-	clear_commands(command);  
+	waitpid(pid, NULL, 0);
+}
+
+void	executor(t_minishell *minishell, t_command *command)
+{
+	int	tmp_stds[2];
+
+	if (!command->s_commands)
+		return (clear_commands(command));
+	expander(minishell, command->s_commands);
+	tmp_stds[0] = dup(0);
+	tmp_stds[1] = dup(1);
+	if (!command->s_commands->next)
+		execute_single_cmd(minishell, command, tmp_stds);
+	else
+		execute_pipeline(minishell, command, tmp_stds);
+	restore_stds(tmp_stds);
+	clear_commands(command);	
 }

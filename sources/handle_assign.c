@@ -87,24 +87,5 @@ void	handle_assign(t_minishell *minishell, t_simple_cmd *curr)
 	}
 	i = -1;
 	while (curr->arguments[++i])
-	{
-		assign = ft_strdup(curr->arguments[i]);
-		single_assign(minishell, assign);
-		/*var_name = env_name(assign);
-		env = find_env(minishell->main_env, var_name);
-		if (env)
-		{
-			free(env->data);
-			env->data = assign;
-			return ;
-		}
-		env = find_env(minishell->session_env, var_name);
-		if (env)
-		{
-			free(env->data);
-			env->data = assign;
-		}
-		else
-			ft_lstadd_back(&minishell->session_env, ft_lstnew(assign));*/
-	}
+		single_assign(minishell, ft_strdup(curr->arguments[i]));
 }

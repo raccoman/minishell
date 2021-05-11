@@ -50,7 +50,7 @@ void	handle_enter(t_minishell *minishell)
 		minishell->input = NULL;
 	}
 	minishell->cursor = 0;
-	printf(CC_RESET CC_CYN "maxishell $>" CC_MAG " ");
+	printf(CC_CYN "maxishell $> " CC_MAG);
 }
 
 void	handle_key(t_minishell *minishell, t_key key)
@@ -69,7 +69,8 @@ void	handle_key(t_minishell *minishell, t_key key)
 		if (minishell->cursor == 0) //TODO: far partire un suono
 			return;
 		minishell->cursor--;
-		printf("\033[1D"); //Muove il cursore uno slot indietro
+		//printf("\033[1D"); //Muove il cursore uno slot indietro
+		printf("\b");
 	}
 	else if (key == KEY_RIGHT)
 	{

@@ -55,5 +55,6 @@ int		ft_contains(char *charset, int c);
 char	*ft_append(char *str, char c);
 char	*ft_insert(char *str, int c, int pos);
 char	*ft_remove_at(char *str, int pos);
+char    *ft_strmaxjoin(char **strings, char *c);
 
 #endif

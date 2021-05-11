@@ -5,9 +5,8 @@ void	prompt(t_minishell *minishell, const char *prefix)
 	int	length;
 
 	printf("%c[2K", 27);
-	printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG "%s", prefix, minishell->input);
-
 	minishell->cursor++;
+	printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG "%s", prefix, minishell->input);
 	length = ft_strlen(minishell->input);
 	while (minishell->cursor < length)
 	{
@@ -37,7 +36,7 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argv;
 	configure(g_minishell, env);
 	watermark();
-	printf(CC_RESET CC_CYN "maxishell $> " CC_MAG);
+	printf(CC_CYN "maxishell $> " CC_MAG);
 	while (g_minishell->running)
 	{
 		ft_fflush(stdout);

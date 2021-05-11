@@ -16,7 +16,7 @@ char	*get_next_token(char **input)
 	return (token);
 }
 
-void	handle_infile(char **input, t_command *command)
+int	handle_infile(char **input, t_command *command)
 {
 	char	*path;
 	int		i;
@@ -28,12 +28,15 @@ void	handle_infile(char **input, t_command *command)
 	if (!(**input))
 	{
 		printf(CC_RESET "syntax error: " CC_RED "expected infile" CC_RESET "\n");
-		return ;
+		return (0);
 	}
 	path = get_next_token(input);
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
+	{
 		printf(CC_RESET "%s: " CC_RED "no such file or directory" CC_RESET "\n", path); // todo ritornare un codice di errore che non esegue nessun comanda e libera tutto
+		return (0);
+	}
 	else
 	{
 		if (command->infile)
@@ -41,9 +44,10 @@ void	handle_infile(char **input, t_command *command)
 		command->infile = path;
 	}
 	close(fd);
+	return (1);
 }
 
-void	handle_outfile(char **input, t_command *command)
+int	handle_outfile(char **input, t_command *command)
 {
 	char	*path;
 	int		i;
@@ -55,7 +59,7 @@ void	handle_outfile(char **input, t_command *command)
 	if (!(**input))
 	{
 		printf (CC_RESET "syntax error: " CC_RED "expected outfile" CC_RESET "\n");
-		return ;
+		return (0);
 	}
 	path = get_next_token(input);
 	if (command->append)
@@ -66,6 +70,7 @@ void	handle_outfile(char **input, t_command *command)
 		free(command->outfile);
 	command->outfile = path;
 	close(fd);
+	return (1);
 }
 
 t_simple_cmd	*create_scmd(t_command *command, char *splitted)
@@ -73,10 +78,12 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 	t_simple_cmd	*rslt;
 	int				i;
 	char			*buff;
+	int				file_ret;
 
 	rslt = malloc(sizeof(t_simple_cmd));
 	rslt->arguments = NULL;
 	i = 0;
+	file_ret = 1;
 	while (*splitted)
 	{
 		while (*splitted == ' ')
@@ -86,7 +93,7 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 		while (*splitted == ' ')
 			splitted++;
 		if (*splitted == '<')
-			handle_infile(&splitted, command);
+			file_ret = handle_infile(&splitted, command);
 		if (*splitted == '>')
 		{
 			command->append = 0;
@@ -95,7 +102,13 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 				splitted++;
 				command->append = 1;
 			}
-			handle_outfile(&splitted, command);
+			file_ret = handle_outfile(&splitted, command);
+		}
+		if (!file_ret)
+		{
+			ft_free2D((void **)rslt->arguments);
+			free(rslt);
+			return (NULL);
 		}
 	}
 	rslt->next = NULL;
@@ -115,6 +128,8 @@ void	parse_input(t_minishell *minishell)
 	while (simple_cmds[i])
 	{
 		tmp = create_scmd(minishell->command, simple_cmds[i++]); // questo riempie la struttura t_simple_cmd e nel caso aggiorna infile e outfile
+		if (!tmp)
+			return (clear_commands(minishell->command));
 		add_command(minishell->command, tmp); // questo aggiunge il nuovo simple commands alla lista dentro command
 	}
 	ft_free2D((void **)simple_cmds);

@@ -5,7 +5,7 @@ void	single_export(t_minishell *minishell, char *export)
 	t_list	*env;
 
 	if (is_assign(export))
-		single_assign(minishell, export);
+		single_assign(minishell, ft_strdup(export));
 	env = find_env(minishell->main_env, export);
 	if (env)
 		return ;
