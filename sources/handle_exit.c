@@ -12,7 +12,7 @@ void    clear_all(t_minishell *minishell)
 
 void    handle_exit(t_minishell *minishell)
 {
-	printf(CC_WHT "Bye bye\n" CC_RESET);
+	printf("Bye bye\n");
 	clear_all(minishell);
 	exit(0);
 }

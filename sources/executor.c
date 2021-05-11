@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+void	print_error(char *formatted, char *arg)
+{
+	int	tmpout;
+
+	tmpout = dup(1);
+	dup2(2, 1);
+	if (arg)
+		printf(formatted, arg);
+	else
+		printf("%s", formatted);
+	dup2(tmpout, 1);
+	close(tmpout);
+}
+
 void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 {
 	int	i;
@@ -22,7 +36,8 @@ void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell)
 	if (is_assign(name) && (i = 1))
 		handle_assign(minishell, curr);
 	if (!i)
-		printf(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", name);
+		print_error(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", name);
+		//printf(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", name);
 }
 
 void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_stds)

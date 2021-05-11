@@ -28,6 +28,11 @@ void	handle_signal(int signal)
 	if (g_minishell->input)
 		free(g_minishell->input);
 	g_minishell->input = NULL;
+	if (g_minishell->prompt)
+	{
+		free(g_minishell->prompt);
+		g_minishell->prompt = NULL;
+	}
 	printf("\n" CC_CYN "maxishell $> " CC_MAG);
 	ft_fflush(stdout);
 }
@@ -78,6 +83,7 @@ void	get_input(t_minishell *minishell)
 		else
 		{
 			minishell->input = ft_insert(minishell->input, c, minishell->cursor);
+			minishell->cursor++;
 			prompt(minishell, "\r");
 		}
 		ft_fflush(stdout);

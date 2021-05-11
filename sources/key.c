@@ -27,12 +27,35 @@ t_key	get_key(char c)
 	return (KEY_NONE);
 }
 
+void	adjust_prompt(t_minishell *minishell)
+{
+	static char	*old_promt;
+
+	if (minishell->prompt)
+	{
+		if (!old_promt)
+			old_promt = minishell->prompt;
+		else
+		{
+			if (minishell->prompt == old_promt)
+			{
+				free(minishell->prompt);
+				minishell->prompt = NULL;
+				old_promt = NULL;
+			}
+			else
+				old_promt = minishell->prompt;
+		}
+	}
+}
+
 void	handle_enter(t_minishell *minishell)
 {
 	char	**single_input;
 	int		i;
+	static	int n_flag;
 
-	printf("\n");
+	printf(CC_RESET "\n");
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
@@ -50,7 +73,8 @@ void	handle_enter(t_minishell *minishell)
 		minishell->input = NULL;
 	}
 	minishell->cursor = 0;
-	printf(CC_CYN "maxishell $> " CC_MAG);
+	adjust_prompt(minishell);
+	prompt(minishell, "");
 }
 
 void	handle_key(t_minishell *minishell, t_key key)
@@ -61,7 +85,6 @@ void	handle_key(t_minishell *minishell, t_key key)
 			return;
 		minishell->cursor--;
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
-		minishell->cursor--;
 		prompt(minishell, "\r");
 	}
 	else if (key == KEY_LEFT)

@@ -5,14 +5,21 @@ void	prompt(t_minishell *minishell, const char *prefix)
 	int	length;
 
 	printf("%c[2K", 27);
-	minishell->cursor++;
-	printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG "%s", prefix, minishell->input);
+	//minishell->cursor++;
+	printf(CC_RESET "%s", prefix);
+	if (minishell->prompt)
+		printf("%s", minishell->prompt);
+	if (minishell->input)
+		printf(CC_CYN "maxishell $> " CC_MAG "%s", minishell->input);
+	else
+		printf(CC_CYN "maxishell $> " CC_MAG);
+	/*if (minishell->input)
+		printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG "%s", prefix, minishell->input);
+	else
+		printf(CC_RESET "%s" CC_CYN "maxishell $> " CC_MAG, prefix);*/
 	length = ft_strlen(minishell->input);
-	while (minishell->cursor < length)
-	{
+	while (minishell->cursor < length--)
 		printf("\033[1D");
-		length--;
-	}
 }
 
 void	watermark()
@@ -36,6 +43,7 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argv;
 	configure(g_minishell, env);
 	watermark();
+	//prompt(g_minishell, "");
 	printf(CC_CYN "maxishell $> " CC_MAG);
 	while (g_minishell->running)
 	{

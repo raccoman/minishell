@@ -40,16 +40,13 @@ void	handle_cd(t_minishell *minishell, t_simple_cmd *curr)
 	if (!(*args))
 	{
 		if (!find_env(minishell->main_env, "HOME"))
-		{
-			printf(CC_WHT "cd: " CC_RED "HOME not set" CC_RESET "\n");
-			return ;
-		}
+			return (print_error("cd: " CC_RED "HOME not set" CC_RESET "\n", NULL));
 		dir_to = getenv("HOME");
 	}
 	else
 		dir_to = *args;
 	if (chdir(dir_to) == -1)
-		printf(CC_WHT "cd: " CC_RED "%s" CC_RESET "\n", strerror(errno));
+		print_error("cd: %s: " CC_RED "No such file or directory" CC_RESET "\n", dir_to);
 	else
 	{
 		getcwd(cwd, sizeof(cwd));

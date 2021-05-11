@@ -1,10 +1,6 @@
 TODOS:
 
-- tutte le printf con i colori non vanno bene con le redirections
-
 - executor.c -> clear_commands : liberare simple_cmd->path se lo usiamo
-
-- handle_echo.c -> handle_echo : echo con opzione -n sbarella 
 
 - key.c -> handle_key : far partire un suono quando arrivo alla fine della storia
 
@@ -21,5 +17,3 @@ TODOS:
 - gestire come cristo comanda gli interrupt ctrl-C, ctrl-D & ctrl-\
 
 - gestire comandi non builtin con execve
-
-- spostare tutte le printf di errore su stderr

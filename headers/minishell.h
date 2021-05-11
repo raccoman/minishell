@@ -14,8 +14,6 @@
 # include "color.h"
 # include "../libraries/libft/libft.h"
 
-extern int	errno;
-
 typedef struct	s_history
 {
 	char				*cmd_line;
@@ -70,6 +68,7 @@ void	configure(t_minishell *minishell, char *env[]);
 void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 
+void	print_error(char *formatted, char *arg);
 
 void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);

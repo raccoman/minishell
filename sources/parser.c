@@ -27,14 +27,14 @@ int	handle_infile(char **input, t_command *command)
 		(*input)++;
 	if (!(**input))
 	{
-		printf(CC_RESET "syntax error: " CC_RED "expected infile" CC_RESET "\n");
+		print_error("syntax error: " CC_RED "expected infile" CC_RESET "\n", NULL);
 		return (0);
 	}
 	path = get_next_token(input);
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
-		printf(CC_RESET "%s: " CC_RED "no such file or directory" CC_RESET "\n", path); // todo ritornare un codice di errore che non esegue nessun comanda e libera tutto
+		print_error("%s: " CC_RED "no such file or directory" CC_RESET "\n", path);
 		return (0);
 	}
 	else
@@ -58,7 +58,7 @@ int	handle_outfile(char **input, t_command *command)
 		(*input)++;
 	if (!(**input))
 	{
-		printf (CC_RESET "syntax error: " CC_RED "expected outfile" CC_RESET "\n");
+		print_error("syntax error: " CC_RED "expected outfile" CC_RESET "\n", NULL);
 		return (0);
 	}
 	path = get_next_token(input);

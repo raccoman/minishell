@@ -12,13 +12,9 @@ void    handle_pwd(t_simple_cmd *curr)
 	char	cwd[PATH_MAX];
 	char	**args;
 
-	printf(CC_RESET);
 	args = &(curr->arguments[1]);
 	if (*args && is_option(*args))
-	{
-		printf("pwd: %s: " CC_RED "invalid option" CC_RESET "\n", *args);
-		return ;
-	}
+		return (print_error("pwd: %s: " CC_RED "invalid option" CC_RESET "\n", *args));
 	getcwd(cwd, sizeof(cwd));
 	printf("%s\n", cwd);
 }
