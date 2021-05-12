@@ -2,19 +2,21 @@
 
 t_key	get_key(char c)
 {
+	if (c >= 32 && c <= 126)
+		return (KEY_ALPHANUMERIC);
 	if (c == '\x10')
 		return (KEY_CTRL_P);
 	if (c == '\x18')
 		return (KEY_CTRL_X);
 	if (c == '\x15')
 		return (KEY_CTRL_U);
-	if (c == 0x4)
+	if (c == '\x04')
 		return (KEY_EOF);
-	if (c == 9)
+	if (c == '\x09')
 		return (KEY_TAB);
-	if (c == 10)
+	if (c == '\x0a')
 		return (KEY_ENTER);
-	if (c == 127)
+	if (c == '\x7f')
 		return (KEY_CANCEL);
 	if (c == '\x1b')
 	{
@@ -30,9 +32,29 @@ t_key	get_key(char c)
 				return (KEY_RIGHT);
 			if (c == '\x44')
 				return (KEY_LEFT);
+			if (c == '\x48')
+				return (KEY_HOME);
+			if (c == '\x46')
+				return (KEY_END);
+			if (c == '\x35')
+			{
+				read(0, &c, 1);
+				if (c == '\x41')
+					return (KEY_CTRL_UP);
+				if (c == '\x42')
+					return (KEY_CTRL_DOWN);
+			}
+			if (c == '\x32')
+			{
+				read(0, &c, 1);
+				if (c == '\x44')
+					return (KEY_SHIFT_LEFT);
+				if (c == '\x43')
+					return (KEY_SHIFT_RIGHT);
+			}
 		}
 	}
-	return (KEY_NONE);
+	return (KEY_UNKNOWN);
 }
 
 void	adjust_prompt(t_minishell *minishell)
@@ -89,6 +111,35 @@ void	handle_key(t_minishell *minishell, t_key key)
 {
 	int	i;
 
+	if (key == KEY_HOME)
+	{
+		if (minishell->cursor == 0)
+		{
+			printf("\a");
+			return ;
+		}
+		while (minishell->cursor > 0)
+		{
+			minishell->cursor--;
+			printf("\033[1D");
+		}
+		return ;
+	}
+	if (key == KEY_END)
+	{
+		i = ft_strlen(minishell->input);
+		if (minishell->cursor == i)
+		{
+			printf("\a");
+			return ;
+		}
+		while (minishell->cursor < i)
+		{
+			minishell->cursor++;
+			printf("\033[1C");
+		}
+		return ;
+	}
 	if (key == KEY_CTRL_X) // Cut
 	{
 		if (minishell->input && *minishell->input)
@@ -144,7 +195,32 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
 		prompt(minishell, "\r");
 	}
-	else if (key == KEY_LEFT)
+	if (key == KEY_SHIFT_LEFT)
+	{
+		if (minishell->cursor == 0)
+		{
+			printf("\a");
+			return;
+		}
+		while (minishell->cursor > 0 && minishell->input[minishell->cursor] != ' ')
+		{
+			minishell->cursor--;
+			printf("\033[1D");
+		}
+		while (minishell->cursor > 0 && minishell->input[minishell->cursor] == ' ')
+		{
+			minishell->cursor--;
+			printf("\033[1D");
+		}
+		while (minishell->cursor > 0 && minishell->input[minishell->cursor] != ' '
+			&& minishell->input[minishell->cursor - 1] != ' ')
+		{
+			minishell->cursor--;
+			printf("\033[1D");
+		}
+		return ;
+	}
+	if (key == KEY_LEFT)
 	{
 		if (minishell->cursor == 0)
 		{
@@ -152,10 +228,29 @@ void	handle_key(t_minishell *minishell, t_key key)
 			return;
 		}
 		minishell->cursor--;
-		//printf("\033[1D"); //Muove il cursore uno slot indietro
-		printf("\b");
+		printf("\033[1D"); //Muove il cursore uno slot indietro
 	}
-	else if (key == KEY_RIGHT)
+	if (key == KEY_SHIFT_RIGHT)
+	{
+		i = ft_strlen(minishell->input);
+		if (minishell->cursor == i)
+		{
+			printf("\a");
+			return;
+		}
+		while (minishell->cursor < i && minishell->input[minishell->cursor] != ' ')
+		{
+			minishell->cursor++;
+			printf("\033[1C");
+		}
+		while (minishell->cursor < i && minishell->input[minishell->cursor] == ' ')
+		{
+			minishell->cursor++;
+			printf("\033[1C");
+		}
+		return ;
+	}
+	if (key == KEY_RIGHT)
 	{
 		if (minishell->cursor == ft_strlen(minishell->input))
 		{
@@ -165,7 +260,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->cursor++;
 		printf("\033[1C"); //Muove il cursore uno slot avanti
 	}
-	else if (key == KEY_UP)
+	if (key == KEY_UP || key == KEY_CTRL_UP)
 	{
 		if (!(minishell->history->prec))
 		{
@@ -179,7 +274,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		}
 		minishell->input = ft_strdup(minishell->history->cmd_line);
 	}
-	else if (key == KEY_DOWN)
+	if (key == KEY_DOWN || key == KEY_CTRL_DOWN)
 	{
 		if (!(minishell->history->next))
 		{
@@ -196,6 +291,12 @@ void	handle_key(t_minishell *minishell, t_key key)
 	if (key == KEY_UP || key == KEY_DOWN)
 	{
 		minishell->cursor = ft_strlen(minishell->input);
+		prompt(minishell, "\r");
+	}
+	if (key == KEY_CTRL_DOWN || key == KEY_CTRL_UP)
+	{
+		if (minishell->cursor >= ft_strlen(minishell->input))
+			minishell->cursor = ft_strlen(minishell->input);
 		prompt(minishell, "\r");
 	}
 }

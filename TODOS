@@ -4,8 +4,6 @@ TODOS:
 
 - fare la history con i controcazzi (optional)
 
-- gestire le freccete fine/inzio riga e saltare di parola in parola
-
 - gestire $? (come caZo si fa se chiamo un comando non builtin :0)
 
 - aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env

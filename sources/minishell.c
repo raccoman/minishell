@@ -28,12 +28,11 @@ void	handle_signal(int signal)
 		g_minishell->cursor = 0;
 		if (g_minishell->input)
 			free(g_minishell->input);
-		g_minishell->input = NULL;
-		if (g_minishell->prompt) {
+		if (g_minishell->prompt)
 			free(g_minishell->prompt);
-			g_minishell->prompt = NULL;
-		}
-		printf("\n" CC_CYN "maxishell $> " CC_MAG);
+		g_minishell->prompt = NULL;
+		g_minishell->input = NULL;
+		prompt(g_minishell, "\n\r");
 		ft_fflush(stdout);
 	}
 	else if (signal == SIGQUIT && g_minishell->pid)
@@ -83,7 +82,7 @@ void	get_input(t_minishell *minishell)
 		tcsetattr(0, TCSANOW, &minishell->sys_cfg);
 		if (key == KEY_ENTER)
 			break ;
-		else if (key != KEY_NONE)
+		else if (key != KEY_ALPHANUMERIC)
 			handle_key(minishell, key);
 		else
 		{

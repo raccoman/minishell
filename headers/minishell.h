@@ -56,8 +56,13 @@ typedef struct	s_minishell
 
 typedef enum	e_key
 {
-	KEY_NONE,
+	KEY_UNKNOWN,
+	KEY_ALPHANUMERIC,
 	KEY_EOF,
+	KEY_SHIFT_LEFT,
+	KEY_SHIFT_RIGHT,
+	KEY_CTRL_UP,
+	KEY_CTRL_DOWN,
 	KEY_CTRL_X,
 	KEY_CTRL_P,
 	KEY_CTRL_U,
@@ -67,7 +72,9 @@ typedef enum	e_key
 	KEY_DOWN,
 	KEY_RIGHT,
 	KEY_LEFT,
-	KEY_CANCEL
+	KEY_CANCEL,
+	KEY_HOME,
+	KEY_END,
 }				t_key;
 
 t_minishell	*g_minishell;
