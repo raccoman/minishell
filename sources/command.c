@@ -10,7 +10,6 @@ void	clear_commands(t_command *command)
 	while (list_copy)
 	{
 		i = 0;
-		// todo : liberare simple_cmd->path se lo usiamo
 		while (list_copy->arguments[i])
 			free(list_copy->arguments[i++]);
 		free(list_copy->arguments);

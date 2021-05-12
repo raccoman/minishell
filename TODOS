@@ -1,7 +1,5 @@
 TODOS:
 
-- executor.c -> clear_commands : liberare simple_cmd->path se lo usiamo
-
 - parser.c -> parse_input : gestire '  " \
 
 - fare la history con i controcazzi (optional)
@@ -10,4 +8,6 @@ TODOS:
 
 - gestire $? (come caZo si fa se chiamo un comando non builtin :0)
 
-- gestire comandi non builtin con execve
+- aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
+
+- ctrl-c e ctrl-\ sbarellano leggermente il display del prompt

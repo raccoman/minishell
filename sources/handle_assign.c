@@ -49,7 +49,16 @@ void	redirect_cmd(t_minishell *minishell, t_simple_cmd *curr)
 	new_arguments[j] = 0;
 	ft_free2D((void **)curr->arguments);
 	curr->arguments = new_arguments;
-	dispatcher(curr->arguments[0], curr, minishell);
+	if (builtins(curr->arguments[0], curr, minishell))
+		return ;
+	i = fork();
+	if (!i)
+	{
+		execute_non_builtin(curr, minishell);
+		print_error(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", curr->arguments[0]);
+		exit(1);
+	}
+	waitpid(i, NULL, 0);
 }
 
 void	single_assign(t_minishell *minishell, char *assign)

@@ -58,3 +58,19 @@ char	*get_env_value(t_minishell *minishell, char *name)
 		i++;
 	return (((char *)env->data) + (i + 1));
 }
+
+char	**get_env_matrix(t_list *env)
+{
+	char	**result;
+	int		i;
+
+	result = malloc((ft_lstsize(env) + 1) * sizeof(char *));
+	i = 0;
+	while (env)
+	{
+		result[i++] = ft_strdup(env->data);
+		env = env->next;
+	}
+	result[i] = 0;
+	return (result);
+}

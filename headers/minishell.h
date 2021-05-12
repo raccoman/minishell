@@ -10,9 +10,12 @@
 # include <string.h>
 # include <signal.h>
 # include <unistd.h>
+# include <errno.h>
 
 # include "color.h"
 # include "../libraries/libft/libft.h"
+
+extern int errno;
 
 typedef struct	s_history
 {
@@ -23,7 +26,6 @@ typedef struct	s_history
 
 typedef	struct	s_simple_cmd
 {
-	char	*path; // serve per i NON-builtin, bisognerá cercare la loro posizione nel file_system con lstat e chiamare execve con il path corretto
 	char	**arguments; // arguments[0] é il comando in se
 	struct s_simple_cmd	*next;
 }			t_simple_cmd;
@@ -75,11 +77,14 @@ void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 
 void	print_error(char *formatted, char *arg);
+short	is_option(char *str);
+int is_path(char *str);
 
 void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);
-void	dispatcher(char *name, t_simple_cmd *curr, t_minishell *minishell);
+int		builtins(char *name, t_simple_cmd *curr, t_minishell *minishell);
 void    executor(t_minishell *minishell, t_command *command);
+void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell);
 void	expander(t_minishell *minishell, t_simple_cmd *curr);
 
 t_key	get_key(char c);
@@ -99,6 +104,7 @@ t_list	*find_env(t_list *env, char *name);
 int		is_assign(const char *str);
 int		cmd_cmp(char *s1, char *s2);
 char	*get_env_value(t_minishell *minishell, char *name);
+char	**get_env_matrix(t_list *env);
 
 void	restore_stds(int *tmp_stds);
 void	redirect_outfile(char *outfile, int tmpout, int append);

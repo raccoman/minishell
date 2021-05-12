@@ -1,12 +1,5 @@
 #include "minishell.h"
 
-short	is_option(char *str)
-{
-	if (*str == '-')
-		return (1);
-	return (0);
-}
-
 void    handle_pwd(t_simple_cmd *curr)
 {
 	char	cwd[PATH_MAX];
