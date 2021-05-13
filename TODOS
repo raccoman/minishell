@@ -1,11 +1,7 @@
 TODOS:
 
-- parser.c -> parse_input : gestire '  " \
-
-- fare la history con i controcazzi (optional)
-
-- gestire $? (come caZo si fa se chiamo un comando non builtin :0)
+- parser.c -> parse_input : gestire '  " \ (half done) , manca la parsificazione corretta
 
 - aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
 
-- ctrl-c e ctrl-\ sbarellano leggermente il display del prompt
+- gestire bene le malloc in modo da non farne nei figli che chiamano execve

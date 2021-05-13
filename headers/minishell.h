@@ -20,6 +20,7 @@ extern int errno;
 typedef struct	s_history
 {
 	char				*cmd_line;
+	char				*safe;
 	struct s_history	*prec;
 	struct s_history	*next;
 }						t_history;
@@ -45,6 +46,7 @@ typedef struct	s_quotes
 	char	*input;
 	int		cursor;
 	int		done;
+	int		running;
 }				t_quotes;
 
 typedef struct	s_minishell
@@ -71,8 +73,8 @@ typedef enum	e_key
 	KEY_EOF,
 	KEY_SHIFT_LEFT,
 	KEY_SHIFT_RIGHT,
-	KEY_CTRL_UP,
-	KEY_CTRL_DOWN,
+	KEY_SHIFT_UP,
+	KEY_SHIFT_DOWN,
 	KEY_CTRL_X,
 	KEY_CTRL_P,
 	KEY_CTRL_U,
@@ -93,9 +95,10 @@ void	configure(t_minishell *minishell, char *env[]);
 void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 
-void	print_error(char *formatted, char *arg);
+void	print_error(char *prefix, char *error_msg);
 short	is_option(char *str);
-int is_path(char *str);
+int		is_path(char *str);
+char	get_last_char(int fd);
 
 void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);
@@ -111,6 +114,7 @@ void	handle_enter(t_minishell *minishell);
 void	clear_history(t_history *history);
 void	init_history(t_minishell *minishell);
 void	add_history(t_minishell *minishell, char *cmd_line);
+void	update_history(t_history *history, char *new_line);
 
 void	add_command(t_command *command, t_simple_cmd *s_cmd);
 int		calc_token_len(char *str);

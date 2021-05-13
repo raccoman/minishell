@@ -31,7 +31,7 @@ int	handle_return(char *total_read, char **line)
 	if (total_read)
 	{
 		*line = total_read;
-		return (1);
+		return (0);
 	}
 	*line = ft_strdup("");
 	return (0);

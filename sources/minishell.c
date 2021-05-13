@@ -18,24 +18,37 @@ void	configure_env(t_minishell *minishell, char	**env)
 		env++;
 	}
 	minishell->session_env = NULL;
+	single_assign(minishell, ft_strdup("?=0"));
 }
 
 void	handle_signal(int signal)
 {
-	(void)signal;
 	if (signal == SIGINT)
 	{
-		g_minishell->cursor = 0;
+		if (!g_minishell->quotes.done)
+		{
+			g_minishell->quotes.done = 1;
+			g_minishell->quotes.input = ft_strdup("");
+			g_minishell->quotes.cursor = 0;
+			write(0, " ", 1);
+		}
 		if (g_minishell->input)
 			free(g_minishell->input);
 		if (g_minishell->prompt)
 			free(g_minishell->prompt);
+		g_minishell->cursor = 0;
 		g_minishell->prompt = NULL;
 		g_minishell->input = NULL;
-		prompt(g_minishell, "\n\r");
+		if (g_minishell->pid != -1)
+			printf(CC_RESET " \n" CC_MAG);
+		else
+		{
+			printf("\n");
+			prompt(g_minishell, "\r");
+		}
 		ft_fflush(stdout);
 	}
-	else if (signal == SIGQUIT && g_minishell->pid)
+	else if (signal == SIGQUIT && g_minishell->pid != -1)
 		printf(CC_RED "Quit: 3" CC_RESET "\n" CC_MAG);
 }
 
@@ -57,6 +70,7 @@ void	configure(t_minishell *minishell, char **env)
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
 	reset_quote(minishell);
+	minishell->pid= -1;
 }
 
 void	terminate(t_minishell *minishell)
@@ -100,6 +114,7 @@ void	get_input(t_minishell *minishell)
 		{
 			calculate_quote(minishell, c);
 			minishell->input = ft_insert(minishell->input, c, minishell->cursor);
+			update_history(minishell->history, minishell->input);
 			minishell->cursor++;
 			prompt(minishell, "\r");
 		}

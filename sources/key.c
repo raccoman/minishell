@@ -18,6 +18,7 @@ t_key	get_key(char c)
 		return (KEY_ENTER);
 	if (c == '\x7f')
 		return (KEY_CANCEL);
+
 	if (c == '\x1b')
 	{
 		read(0, &c, 1);
@@ -36,21 +37,25 @@ t_key	get_key(char c)
 				return (KEY_HOME);
 			if (c == '\x46')
 				return (KEY_END);
-			if (c == '\x35')
+			if (c == '\x31')
 			{
 				read(0, &c, 1);
-				if (c == '\x41')
-					return (KEY_CTRL_UP);
-				if (c == '\x42')
-					return (KEY_CTRL_DOWN);
-			}
-			if (c == '\x32')
-			{
-				read(0, &c, 1);
-				if (c == '\x44')
-					return (KEY_SHIFT_LEFT);
-				if (c == '\x43')
-					return (KEY_SHIFT_RIGHT);
+				if (c == '\x3b')
+				{
+					read(0, &c, 1);
+					if (c == '\x32')
+					{
+						read(0, &c, 1);
+						if (c == '\x41')
+							return (KEY_SHIFT_UP);
+						if (c == '\x42')
+							return (KEY_SHIFT_DOWN);
+						if (c == '\x44')
+							return (KEY_SHIFT_LEFT);
+						if (c == '\x43')
+							return (KEY_SHIFT_RIGHT);
+					}
+				}
 			}
 		}
 	}
@@ -146,6 +151,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		{
 			minishell->clipboard = ft_strdup(minishell->input + minishell->cursor);
 			minishell->input[minishell->cursor] = 0;
+			update_history(minishell->history, minishell->input);
 			prompt(minishell, "\r");
 			return ;
 		}
@@ -160,6 +166,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 			while (minishell->clipboard[++i])
 			{
 				minishell->input = ft_insert(minishell->input, minishell->clipboard[i], minishell->cursor);
+				update_history(minishell->history, minishell->input);
 				minishell->cursor++;
 			}
 			prompt(minishell, "\r");
@@ -194,6 +201,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->cursor--;
 		calculate_quote(minishell, minishell->input[minishell->cursor]);
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
+		update_history(minishell->history, minishell->input);
 		prompt(minishell, "\r");
 	}
 	if (key == KEY_SHIFT_LEFT)
@@ -261,7 +269,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->cursor++;
 		printf("\033[1C"); //Muove il cursore uno slot avanti
 	}
-	if (key == KEY_UP || key == KEY_CTRL_UP)
+	if (key == KEY_UP || key == KEY_SHIFT_UP)
 	{
 		if (!(minishell->history->prec))
 		{
@@ -275,7 +283,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		}
 		minishell->input = ft_strdup(minishell->history->cmd_line);
 	}
-	if (key == KEY_DOWN || key == KEY_CTRL_DOWN)
+	if (key == KEY_DOWN || key == KEY_SHIFT_DOWN)
 	{
 		if (!(minishell->history->next))
 		{
@@ -294,7 +302,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		minishell->cursor = ft_strlen(minishell->input);
 		prompt(minishell, "\r");
 	}
-	if (key == KEY_CTRL_DOWN || key == KEY_CTRL_UP)
+	if (key == KEY_SHIFT_DOWN || key == KEY_SHIFT_UP)
 	{
 		if (minishell->cursor >= ft_strlen(minishell->input))
 			minishell->cursor = ft_strlen(minishell->input);

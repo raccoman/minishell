@@ -27,14 +27,17 @@ int	handle_infile(char **input, t_command *command)
 		(*input)++;
 	if (!(**input))
 	{
-		print_error("syntax error: " CC_RED "expected infile" CC_RESET "\n", NULL);
+		print_error("syntax error", "expected infile");
+		single_assign(g_minishell, ft_strdup("?=258"));
 		return (0);
 	}
 	path = get_next_token(input);
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
-		print_error("%s: " CC_RED "no such file or directory" CC_RESET "\n", path);
+		errno = 0;
+		print_error(path, "No such file or directory");
+		errno = ENOENT;
 		return (0);
 	}
 	else
@@ -58,7 +61,8 @@ int	handle_outfile(char **input, t_command *command)
 		(*input)++;
 	if (!(**input))
 	{
-		print_error("syntax error: " CC_RED "expected outfile" CC_RESET "\n", NULL);
+		print_error("syntax error", "expected outfile");
+		single_assign(g_minishell, ft_strdup("?=258"));
 		return (0);
 	}
 	path = get_next_token(input);

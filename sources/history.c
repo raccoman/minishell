@@ -22,6 +22,7 @@ void	add_history(t_minishell *minishell, char *cmd_line)
 	
 	tmp = malloc(sizeof(t_history));
 	tmp->cmd_line = ft_strdup(cmd_line);
+	tmp->safe = ft_strdup(cmd_line);
 	last = get_last_history(minishell->history);
 	tmp_2 = last->prec;
 	last->prec = tmp;
@@ -29,6 +30,10 @@ void	add_history(t_minishell *minishell, char *cmd_line)
 	tmp->prec = tmp_2;
 	if (tmp_2)
 		tmp_2->next = tmp;
+	free(minishell->history->cmd_line);
+	minishell->history->cmd_line = ft_strdup(minishell->history->safe);
+	free(last->cmd_line);
+	last->cmd_line = ft_strdup("");
 	minishell->history = last;
 }
 
@@ -38,6 +43,7 @@ void	init_history(t_minishell *minishell)
 
 	tmp = malloc(sizeof(t_history));
 	tmp->cmd_line = ft_strdup("");
+	tmp->safe = ft_strdup("");
 	tmp->next = NULL;
 	tmp->prec = NULL;
 	minishell->history = tmp;	
@@ -52,8 +58,15 @@ void	clear_history(t_history *history)
 	while (first)
 	{
 		free(first->cmd_line);
+		free(first->safe);
 		tmp = first->next;
 		free(first);
 		first = tmp;
 	}
+}
+
+void	update_history(t_history *history, char *new_line)
+{
+	free(history->cmd_line);
+	history->cmd_line = ft_strdup(new_line);
 }

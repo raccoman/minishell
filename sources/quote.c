@@ -34,7 +34,7 @@ void	get_input_quote(t_minishell *minishell)
 	minishell->quotes.cursor++;
 	printf(CC_RESET "\n" CC_CYN "> " CC_MAG);
 	ft_fflush(stdout);
-	while (1)
+	while (!minishell->quotes.done)
 	{
 		tcsetattr(0, TCSANOW, &minishell->our_cfg);
 		read(0, &c, 1);

@@ -55,7 +55,7 @@ void	redirect_cmd(t_minishell *minishell, t_simple_cmd *curr)
 	if (!i)
 	{
 		execute_non_builtin(curr, minishell);
-		print_error(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", curr->arguments[0]);
+		print_error(curr->arguments[0], strerror(errno));
 		exit(1);
 	}
 	waitpid(i, NULL, 0);
@@ -70,11 +70,13 @@ void	single_assign(t_minishell *minishell, char *assign)
 	env = find_env(minishell->main_env, var_name);
 	if (env)
 	{
+		free(var_name);
 		free(env->data);
 		env->data = assign;
 		return ;
 	}
 	env = find_env(minishell->session_env, var_name);
+	free(var_name);
 	if (env)
 	{
 		free(env->data);

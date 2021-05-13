@@ -41,6 +41,8 @@ void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell)
 		try_path = ft_strjoin(try_path, *cmd->arguments);
 		free(safe);
 		execve(try_path, cmd->arguments, env_matrix);
+		if (errno != ENOENT)
+			break ;
 	}
 	ft_free2D((void **)paths);
 	ft_free2D((void **)env_matrix);
@@ -51,12 +53,14 @@ int	builtins(char *name, t_simple_cmd *curr, t_minishell *minishell)
 	int	i;
 
 	i = 0;
+	errno = 0;
+	if (!ft_strcmp(name, "echo") && (i = 1))
+		handle_echo(minishell, curr);
+	single_assign(minishell, ft_strdup("?=0"));
 	if (!ft_strcmp(name, "exit") && (i = 1))
 		handle_exit(minishell);
 	if (!ft_strcmp(name, "pwd") && (i = 1))
 		handle_pwd(curr);
-	if (!ft_strcmp(name, "echo") && (i = 1))
-		handle_echo(minishell, curr);
 	if (!ft_strcmp(name, "env") && (i = 1))
 		handle_env(minishell);
 	if (!ft_strcmp(name, "export") && (i = 1))
@@ -70,24 +74,41 @@ int	builtins(char *name, t_simple_cmd *curr, t_minishell *minishell)
 	return (i);
 }
 
+void	set_statusenv(t_minishell *minishell, int code)
+{
+	char *statustoa;
+
+	statustoa = ft_itoa(code);
+	if ((code) == 2)
+		single_assign(minishell, ft_strdup("?=127"));
+	else if ((code) == 13)
+		single_assign(minishell, ft_strdup("?=126"));
+	else
+		single_assign(minishell, ft_strjoin("?=", statustoa));
+	free(statustoa);
+}
+
 void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_stds)
 {
 	t_simple_cmd	*cmd;
-	int				pid;
+	int				status;
+	char			*statustoa;
 
 	cmd = command->s_commands;
 	redirect_infile(command->infile, *tmp_stds, 1);
 	redirect_outfile(command->outfile, tmp_stds[1], command->append);
 	if (builtins(cmd->arguments[0], cmd, minishell))
 		return ;
-	pid = fork();
-	if (!pid)
+	minishell->pid = fork();
+	if (!minishell->pid)
 	{
 		execute_non_builtin(cmd, minishell);
-		print_error(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", cmd->arguments[0]);
-		exit(1);
+		print_error(cmd->arguments[0], strerror(errno));
+		exit(errno);
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(minishell->pid, &status, 0);
+	set_statusenv(minishell, status /= 256);
+	minishell->pid = -1;
 }
 
 void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
@@ -95,6 +116,7 @@ void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 	t_simple_cmd	*curr;
 	int				fdin;
 	int				fdpipe[2];
+	int				status;
 
 	curr = command->s_commands;
 	fdin = redirect_infile(command->infile, *tmp_stds, 0);
@@ -117,14 +139,15 @@ void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 			if (!builtins(curr->arguments[0], curr, minishell))
 			{
 				execute_non_builtin(curr, minishell);
-				print_error(CC_RESET "%s:" CC_RED " command not found" CC_RESET "\n", curr->arguments[0]);
+				print_error(curr->arguments[0], strerror(errno));
 			}
-			exit(0);
+			exit(errno);
 		}
+		waitpid(minishell->pid, &status, 0);
 		curr = curr->next;
 	}
-	waitpid(minishell->pid, NULL, 0);
-	minishell->pid = 0;
+	set_statusenv(minishell, status / 256);
+	minishell->pid = -1;
 }
 
 void	executor(t_minishell *minishell, t_command *command)
@@ -134,6 +157,8 @@ void	executor(t_minishell *minishell, t_command *command)
 	if (!command->s_commands)
 		return (clear_commands(command));
 	expander(minishell, command->s_commands);
+	/*if (**command->s_commands->arguments == 0)
+		return ;*/
 	tmp_stds[0] = dup(0);
 	tmp_stds[1] = dup(1);
 	if (!command->s_commands->next)

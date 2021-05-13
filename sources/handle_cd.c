@@ -19,15 +19,13 @@ int	is_empty(char **args)
 void	update_env(t_minishell *minishell, char *new)
 {
 	char	*old_pwd;
-	char 	*new_pwd;
 
-	new_pwd = ft_strdup(new);
 	old_pwd = ft_strjoin("OLDPWD=", get_env_value(minishell, "PWD"));
 	if (!find_env(minishell->main_env, "OLDPWD"))
 		single_export(minishell, old_pwd);
 	else
 		single_assign(minishell, old_pwd);
-	single_assign(minishell, ft_strjoin("PWD=", new_pwd));
+	single_assign(minishell, ft_strjoin("PWD=", new));
 }
 
 void	handle_cd(t_minishell *minishell, t_simple_cmd *curr)
@@ -40,13 +38,20 @@ void	handle_cd(t_minishell *minishell, t_simple_cmd *curr)
 	if (!(*args))
 	{
 		if (!find_env(minishell->main_env, "HOME"))
-			return (print_error("cd: " CC_RED "HOME not set" CC_RESET "\n", NULL));
+		{
+			errno = 1;
+			return (print_error("cd", "HOME not set"));
+		}
 		dir_to = getenv("HOME");
 	}
 	else
 		dir_to = *args;
 	if (chdir(dir_to) == -1)
-		print_error("cd: %s: " CC_RED "No such file or directory" CC_RESET "\n", dir_to);
+	{
+		errno = 0;
+		print_error(dir_to, "No such file or directory");
+		errno = ENOENT;
+	}
 	else
 	{
 		getcwd(cwd, sizeof(cwd));
