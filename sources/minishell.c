@@ -56,6 +56,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->command->s_commands = NULL;
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
+	reset_quote(minishell);
 }
 
 void	terminate(t_minishell *minishell)
@@ -81,11 +82,23 @@ void	get_input(t_minishell *minishell)
 		key = get_key(c);
 		tcsetattr(0, TCSANOW, &minishell->sys_cfg);
 		if (key == KEY_ENTER)
+		{
+			if (check_quote(minishell))
+				break ;
+			minishell->quotes.input = ft_strdup(minishell->input);
+			minishell->quotes.cursor = minishell->cursor;
+			minishell->input = NULL;
+			minishell->cursor = 0;
+			get_input_quote(minishell);
+			minishell->input = ft_strdup(minishell->quotes.input);
+			minishell->cursor = minishell->quotes.cursor;
 			break ;
+		}
 		else if (key != KEY_ALPHANUMERIC)
 			handle_key(minishell, key);
 		else
 		{
+			calculate_quote(minishell, c);
 			minishell->input = ft_insert(minishell->input, c, minishell->cursor);
 			minishell->cursor++;
 			prompt(minishell, "\r");

@@ -192,6 +192,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 			return;
 		}
 		minishell->cursor--;
+		calculate_quote(minishell, minishell->input[minishell->cursor]);
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
 		prompt(minishell, "\r");
 	}

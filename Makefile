@@ -71,7 +71,7 @@ re: fclean all clean
 
 debug: $(LIBFT) $(SRCS)
 	@$(CC) -g main.c $(SRCS) $(IFLAG) $(HEADERS_DIR) -L$(LIBFT_DIR) -lft $(OFLAG) $(DEBUG)
-	@echo "Done!"
+	@lldb debug
 
 run: re
 	@./minishell

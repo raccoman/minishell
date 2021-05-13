@@ -1,6 +1,6 @@
 #include "libft.h"
 
-char	*__new_str(char c)
+char	*new_string(char c)
 {
 	char	*str;
 
@@ -18,7 +18,7 @@ char	*ft_append(char *str, char c)
 	int	i;
 
 	if (!str)
-		return (__new_str(c));
+		return (new_string(c));
 	i = 0;
 	new_str = malloc(sizeof(char) * (ft_strlen(str) + 2));
 	while (str[i])

@@ -25,7 +25,7 @@ set(SRCS
 		sources/handle_export.c
 		sources/handle_unset.c
 		sources/redirections.c
-		sources/utils.c)
+		sources/utils.c sources/quote.c)
 
 add_executable(${PROJECT_NAME} main.c ${SRCS})
 

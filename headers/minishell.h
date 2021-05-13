@@ -38,6 +38,15 @@ typedef struct	s_command
 	t_simple_cmd	*s_commands;
 }	t_command;
 
+typedef struct	s_quotes
+{
+	int		a;
+	int		b;
+	char	*input;
+	int		cursor;
+	int		done;
+}				t_quotes;
+
 typedef struct	s_minishell
 {
 	struct termios	our_cfg;
@@ -52,6 +61,7 @@ typedef struct	s_minishell
 	t_history		*history;
 	t_command		*command;
 	pid_t			pid;
+	t_quotes		quotes;
 }				t_minishell;
 
 typedef enum	e_key
@@ -127,6 +137,11 @@ void	handle_export(t_minishell *minishell, t_simple_cmd *curr);
 void	handle_cd(t_minishell *minishell, t_simple_cmd *curr);
 void	single_export(t_minishell *minishell, char *export);
 void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
+
+void	reset_quote(t_minishell *minishell);
+void	calculate_quote(t_minishell *minishell, char c);
+void	get_input_quote(t_minishell *minishell);
+int		check_quote(t_minishell *minishell);
 
 
 #endif
