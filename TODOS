@@ -4,4 +4,4 @@ TODOS:
 
 - aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
 
-- gestire bene le malloc in modo da non farne nei figli che chiamano execve
+- gestire bene le malloc in modo da non farne nei figli che chiamano execve (ma anche no)

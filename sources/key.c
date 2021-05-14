@@ -185,10 +185,16 @@ void	handle_key(t_minishell *minishell, t_key key)
 		printf("\a");
 		return ;
 	}
-	if (key == KEY_EOF && (!minishell->input || !*minishell->input))
+	if (key == KEY_EOF)
 	{
-		printf("exit\n");
-		handle_exit(minishell);
+		if (!minishell->input || !*minishell->input)
+		{
+			printf("exit\n");
+			handle_exit(minishell);
+		}
+		else
+			printf("\a");
+			
 		return ;
 	}
 	if (key == KEY_CANCEL)

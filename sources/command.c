@@ -29,6 +29,7 @@ void	clear_commands(t_command *command)
 		command->outfile = NULL;
 	}
 	command->append = 0;
+	command->here_doc = 0;
 }
 
 int	calc_token_len(char *str)

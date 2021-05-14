@@ -5,7 +5,7 @@ void	prompt(t_minishell *minishell, const char *prefix)
 	int	length;
 
 	length = ft_strlen(minishell->input);
-	if (!minishell->quotes.done)
+	if (minishell->pid != -1)
 	{
 		printf("%c[2K", 27);
 		printf(CC_RESET "\r");

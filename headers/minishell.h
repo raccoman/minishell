@@ -36,6 +36,7 @@ typedef struct	s_command
 	char			*infile;
 	char			*outfile;
 	int				append;
+	int				here_doc;
 	t_simple_cmd	*s_commands;
 }	t_command;
 
@@ -129,7 +130,7 @@ char	**get_env_matrix(t_list *env);
 
 void	restore_stds(int *tmp_stds);
 void	redirect_outfile(char *outfile, int tmpout, int append);
-int		redirect_infile(char *infile, int tmpin, int single);
+int	redirect_infile(char *infile, int tmpin, int here_doc, int single);
 
 void    handle_exit(t_minishell *minishell);
 void    handle_pwd(t_simple_cmd *curr);

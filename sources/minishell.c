@@ -23,6 +23,8 @@ void	configure_env(t_minishell *minishell, char	**env)
 
 void	handle_signal(int signal)
 {
+	if (!g_minishell->pid)
+			exit(0);
 	if (signal == SIGINT)
 	{
 		if (!g_minishell->quotes.done)
@@ -39,17 +41,20 @@ void	handle_signal(int signal)
 		g_minishell->cursor = 0;
 		g_minishell->prompt = NULL;
 		g_minishell->input = NULL;
-		if (g_minishell->pid != -1)
-			printf(CC_RESET " \n" CC_MAG);
-		else
+		if (g_minishell->pid == -1)
 		{
 			printf("\n");
 			prompt(g_minishell, "\r");
 		}
+		else
+			printf("\n");
 		ft_fflush(stdout);
 	}
-	else if (signal == SIGQUIT && g_minishell->pid != -1)
+	else if (signal == SIGQUIT && (g_minishell->pid != -1))
+	{
 		printf(CC_RED "Quit: 3" CC_RESET "\n" CC_MAG);
+		ft_fflush(stdout);
+	}
 }
 
 void	configure(t_minishell *minishell, char **env)
@@ -66,6 +71,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->command->infile = NULL;
 	minishell->command->outfile = NULL;
 	minishell->command->append = 0;
+	minishell->command->here_doc = 0;
 	minishell->command->s_commands = NULL;
 	signal(SIGINT, handle_signal);
 	signal(SIGQUIT, handle_signal);
@@ -88,7 +94,8 @@ void	get_input(t_minishell *minishell)
 {
 	char	c;
 	t_key	key;
-
+	
+	minishell->pid = -1;
 	while (1)
 	{
 		tcsetattr(0, TCSANOW, &minishell->our_cfg);

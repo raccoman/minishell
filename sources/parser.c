@@ -32,6 +32,13 @@ int	handle_infile(char **input, t_command *command)
 		return (0);
 	}
 	path = get_next_token(input);
+	if (command->here_doc)
+	{
+		if (command->infile)
+			free(command->infile);
+		command->infile = path;
+		return (1);
+	}
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
@@ -92,12 +99,22 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 	{
 		while (*splitted == ' ')
 			splitted++;
+		if (!*splitted)
+			break ;
 		buff = get_next_token(&splitted);
 		add_argument(rslt, buff);
 		while (*splitted == ' ')
 			splitted++;
 		if (*splitted == '<')
+		{
+			command->here_doc = 0;
+			if (*(splitted + 1) == '<')
+			{
+				splitted++;
+				command->here_doc = 1;
+			}
 			file_ret = handle_infile(&splitted, command);
+		}
 		if (*splitted == '>')
 		{
 			command->append = 0;

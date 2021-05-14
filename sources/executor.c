@@ -97,7 +97,7 @@ void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_std
 	cmd = command->s_commands;
 	if (!(*cmd->arguments))
 		return ;
-	redirect_infile(command->infile, *tmp_stds, 1);
+	redirect_infile(command->infile, *tmp_stds, command->here_doc, 1);
 	redirect_outfile(command->outfile, tmp_stds[1], command->append);
 	if (builtins(cmd->arguments[0], cmd, minishell))
 		return ;
@@ -121,7 +121,7 @@ void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
 	int				status;
 
 	curr = command->s_commands;
-	fdin = redirect_infile(command->infile, *tmp_stds, 0);
+	fdin = redirect_infile(command->infile, *tmp_stds, command->here_doc, 0);
 	while (curr)
 	{
 		dup2(fdin, 0);
@@ -164,10 +164,6 @@ void	executor(t_minishell *minishell, t_command *command)
 	if (!command->s_commands)
 		return (clear_commands(command));
 	expander(minishell, command->s_commands);
-	if (!command->s_commands->arguments)
-	{
-
-	}
 	tmp_stds[0] = dup(0);
 	tmp_stds[1] = dup(1);
 	if (!command->s_commands->next)
