@@ -146,7 +146,10 @@ void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
 void	reset_quote(t_minishell *minishell);
 void	calculate_quote(t_minishell *minishell, char c);
 void	get_input_quote(t_minishell *minishell);
-int		check_quote(t_minishell *minishell);
+//int		check_quote(t_minishell *minishell);
+int		check_quote(char *str);
+
+char    **safe_split(char *input, char del);
 
 
 #endif

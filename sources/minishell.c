@@ -104,16 +104,16 @@ void	get_input(t_minishell *minishell)
 		tcsetattr(0, TCSANOW, &minishell->sys_cfg);
 		if (key == KEY_ENTER)
 		{
-			if (check_quote(minishell))
-				break ;
-			minishell->quotes.input = ft_strdup(minishell->input);
+			//if (check_quote(minishell))
+			break ;
+			/*minishell->quotes.input = ft_strdup(minishell->input);
 			minishell->quotes.cursor = minishell->cursor;
 			minishell->input = NULL;
 			minishell->cursor = 0;
 			get_input_quote(minishell);
 			minishell->input = ft_strdup(minishell->quotes.input);
 			minishell->cursor = minishell->quotes.cursor;
-			break ;
+			break ;*/
 		}
 		else if (key != KEY_ALPHANUMERIC)
 			handle_key(minishell, key);

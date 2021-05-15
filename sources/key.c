@@ -84,6 +84,39 @@ void	adjust_prompt(t_minishell *minishell)
 	}
 }
 
+int	first_check(t_minishell *minishell, char *input)
+{
+	int	ret;
+	int check;
+
+	ret = 1;
+	if (!input)
+		ret = 0;
+	else
+	{
+		check = check_quote(minishell->input);
+		if (!check || check == -1)
+		{
+			add_history(minishell, minishell->input);
+			free(minishell->input);
+			minishell->input = NULL;
+			if (!check)
+				print_error("syntax error", "missing quote");
+			else
+				print_error("syntax error", "escape at the end of line");
+			ret = check;
+			if (ret == -1)
+				ret = 0;
+		}
+	}
+	if (ret)
+		return (ret);
+	minishell->cursor = 0;
+	adjust_prompt(minishell);
+	prompt(minishell, "");
+	return (ret);
+}
+
 void	handle_enter(t_minishell *minishell)
 {
 	char	**single_input;
@@ -91,10 +124,14 @@ void	handle_enter(t_minishell *minishell)
 	static	int n_flag;
 
 	printf(CC_RESET "\n");
+	if (!first_check(minishell, minishell->input))
+		return ;	
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
-		single_input = ft_split(minishell->input, ';');
+		//single_input = split_semicolon(minishell->input);
+		single_input = safe_split(minishell->input, ';');
+		//single_input = ft_split(minishell->input, ';');
 		free(minishell->input);
 		i = 0;
 		while (single_input[i])

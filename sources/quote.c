@@ -19,11 +19,41 @@ void	calculate_quote(t_minishell *minishell, char c)
 		minishell->quotes.b = !minishell->quotes.b;
 }
 
-int	check_quote(t_minishell *minishell)
+/*int	check_quote(t_minishell *minishell)
 {
 	return (!minishell->quotes.a && !minishell->quotes.b);
-}
+}*/
 
+int	check_quote(char *str)
+{
+	int		quote;
+	int		i;
+	char	type;
+
+	if (str[ft_strlen(str) - 1] == '\\')
+		return (-1); 
+	i = -1;
+	quote = 1;
+	while (str[++i])
+	{
+		if (quote)
+		{
+			if ((str[i] == '\'' || str[i] == '\"') && (!i || str[i - 1] != '\\'))
+			{
+				quote--;
+				type = str[i];
+			}
+		}
+		else if (str[i] == type)
+		{
+			if (type == '\'' || (type == '\"' && str[i - 1] != '\\'))
+				quote++;
+		}
+	}
+	return (quote);
+}
+	
+/*
 void	get_input_quote(t_minishell *minishell)
 {
 	char	c;
@@ -65,4 +95,4 @@ void	get_input_quote(t_minishell *minishell)
 		}
 		ft_fflush(stdout);
 	}
-}
+}*/

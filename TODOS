@@ -5,3 +5,13 @@ TODOS:
 - aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
 
 - gestire bene le malloc in modo da non farne nei figli che chiamano execve (ma anche no)
+
+- exit che riceve un numero fa exit con quel numero, se no esce con il valore di $?
+
+- echo -nnnnnnnnnnn conta come -n
+
+- export sorta in ordine alfabetico (ma anche no)
+
+- permessi 644 quando creo i file di redirect
+
+- da sistemare la safe split e la gestione di sti cazzo di quote e escape che é un parto
