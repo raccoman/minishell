@@ -1,7 +1,5 @@
 TODOS:
 
-- parser.c -> parse_input : gestire '  " \ (half done) , manca la parsificazione corretta
-
 - aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
 
 - gestire bene le malloc in modo da non farne nei figli che chiamano execve (ma anche no)
@@ -12,6 +10,4 @@ TODOS:
 
 - export sorta in ordine alfabetico (ma anche no)
 
-- permessi 644 quando creo i file di redirect
-
-- da sistemare la safe split e la gestione di sti cazzo di quote e escape che é un parto
+- rifare il parsing per gestire ' " \ (half done)

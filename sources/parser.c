@@ -1,19 +1,66 @@
 #include "minishell.h"
 
+int	calc_token_len(char *str)
+{
+	int	count;
+
+	count = 0;
+	while (str[count] && !ft_contains(" <>", str[count]))
+		count++;
+	return(count);
+}
+
+void	parse_quote(char **input, char *token, int *i)
+{
+	char	*str;
+
+	str = *input;
+	token[(*i)++] = *str++;
+	while (*str != '\'')
+		token[(*i)++] = *str++;
+	(*input) = str;
+}
+
+void	parse_dquote(char **input, char *token, int *i)
+{
+	char	*str;
+
+	str = *input;
+	token[(*i)++] = *str++;
+	while (1)
+	{
+		if (*str == '\"')
+			break ;
+		if (*str == '\\' && ft_contains("\';|\\", str[1]))
+			str++;
+		token[(*i)++] = *str++;
+	}
+	(*input) = str;
+}
+
 char	*get_next_token(char **input)
 {
 	int		i;
 	char	*token;
+	char	*result;
 
-	token = malloc(calc_token_len(*input) + 1);
+	token = malloc(ft_strlen(*input) + 1);
 	i = 0;
 	while (**input && !ft_contains(" <>", **input))
 	{
+		if (**input == '\'')
+			parse_quote(input, token, &i);
+		if (**input == '\"')
+			parse_dquote(input, token, &i);
+		if (**input == '\\' && (*input)[1] != '$')
+			(*input)++;	
 		token[i++] = **input;
 		(*input)++;
 	}
 	token[i] = 0;
-	return (token);
+	result = ft_strdup(token);
+	free(token);
+	return (result);
 }
 
 int	handle_infile(char **input, t_command *command)
@@ -74,9 +121,9 @@ int	handle_outfile(char **input, t_command *command)
 	}
 	path = get_next_token(input);
 	if (command->append)
-		fd = open(path, O_WRONLY | O_CREAT | O_APPEND, S_IRWXU);
+		fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
-		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (command->outfile)
 		free(command->outfile);
 	command->outfile = path;
@@ -144,7 +191,7 @@ void	parse_input(t_minishell *minishell)
 	int				i;
 	t_simple_cmd	*tmp;
 
-	simple_cmds = ft_split(minishell->input, '|');
+	simple_cmds = safe_split(minishell->input, '|');
 	i = 0;
 	while (simple_cmds[i])
 	{

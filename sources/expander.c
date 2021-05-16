@@ -34,6 +34,7 @@ void	expander(t_minishell *minishell, t_simple_cmd *curr)
 	char	*env_value;
 	char	*env_name;
 	int		deleted;
+	char	*expanded;
 
 	while (curr)
 	{

@@ -10,8 +10,12 @@ void    jump_quote(char *input, int *i, char type)
     }
     else if (type == '\"')
     {
-        while (input[*i] != '\"' && input[*i - 1] != '\\')
-            (*i)++;
+        while (1)
+        {
+            if (input[*i] == '\"' && input[*i - 1] != '\\')
+                break ;
+             (*i)++;
+        }
     }
     (*i)++;
 }
@@ -39,13 +43,13 @@ char    **safe_split(char *input, char del)
     char    **splitted;
     int     i;
     int     start;
-    char    *new;
+    char    *token;
 
     splitted = malloc(sizeof(char *));
     *splitted = 0;
     i = 0;
     start = 0;
-    while (input[i])
+    while (1)
     {
         if (input[i] == '\\')
             i += 2;
@@ -55,10 +59,12 @@ char    **safe_split(char *input, char del)
             jump_quote(input, &i, '\"');
         if (input[i] == del || !input[i])
         {
-            new = malloc((i - start + 1) * sizeof(char));
+            token = malloc((i - start + 1));
+            ft_strlcpy(token, input + start, i - start + 1);
+            splitted = add_splitted(splitted, token);
+            if (!input[i])
+                break ;
             start = ++i;
-            ft_strlcpy(new, input + start, sizeof(new));
-            splitted = add_splitted(splitted, new);
         }
         else
             i++;

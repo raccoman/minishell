@@ -32,16 +32,6 @@ void	clear_commands(t_command *command)
 	command->here_doc = 0;
 }
 
-int	calc_token_len(char *str)
-{
-	int	count;
-
-	count = 0;
-	while (str[count] && !ft_contains(" <>", str[count]))
-		count++;
-	return(count);
-}
-
 void	add_argument(t_simple_cmd *s_cmd, char *new_arg)
 {
 	char	**new_arguments;
