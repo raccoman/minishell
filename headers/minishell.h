@@ -57,6 +57,7 @@ typedef struct	s_minishell
 	int				running;
 	t_list			*main_env;
 	t_list			*session_env;
+	t_list			*exported;
 	char			*input;
 	char			*clipboard;
 	char			*prompt;
@@ -97,9 +98,9 @@ void	terminate(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 
 void	print_error(char *prefix, char *error_msg);
-short	is_option(char *str);
+int		is_assign(const char *str);
 int		is_path(char *str);
-char	get_last_char(int fd);
+short	check_option(char *cmd, char *first);
 
 void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);
@@ -118,24 +119,22 @@ void	add_history(t_minishell *minishell, char *cmd_line);
 void	update_history(t_history *history, char *new_line);
 
 void	add_command(t_command *command, t_simple_cmd *s_cmd);
-int		calc_token_len(char *str);
-void	add_argument(t_simple_cmd *s_cmd, char *new_arg);
 void	clear_commands(t_command *command);
 
 t_list	*find_env(t_list *env, char *name);
-int		is_assign(const char *str);
+char	*env_name(const char *env);
 int		cmd_cmp(char *s1, char *s2);
 char	*get_env_value(t_minishell *minishell, char *name);
 char	**get_env_matrix(t_list *env);
 
 void	restore_stds(int *tmp_stds);
 void	redirect_outfile(char *outfile, int tmpout, int append);
-int	redirect_infile(char *infile, int tmpin, int here_doc, int single);
+int		redirect_infile(char *infile, int tmpin, int here_doc, int single);
 
-void    handle_exit(t_minishell *minishell);
+void	handle_exit(t_minishell *minishell, t_simple_cmd *curr);
 void    handle_pwd(t_simple_cmd *curr);
 void	handle_echo(t_minishell *minishell, t_simple_cmd *curr);
-void	handle_env(t_minishell *minishell);
+void	handle_env(t_minishell *minishell, t_simple_cmd *curr);
 void	handle_assign(t_minishell *minishell, t_simple_cmd *curr);
 void	single_assign(t_minishell *minishell, char *assign);
 void	handle_export(t_minishell *minishell, t_simple_cmd *curr);
@@ -146,7 +145,6 @@ void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
 void	reset_quote(t_minishell *minishell);
 void	calculate_quote(t_minishell *minishell, char c);
 void	get_input_quote(t_minishell *minishell);
-//int		check_quote(t_minishell *minishell);
 int		check_quote(char *str);
 
 char    **safe_split(char *input, char del);

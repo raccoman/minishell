@@ -58,11 +58,11 @@ int	builtins(char *name, t_simple_cmd *curr, t_minishell *minishell)
 		handle_echo(minishell, curr);
 	single_assign(minishell, ft_strdup("?=0"));
 	if (!ft_strcmp(name, "exit") && (i = 1))
-		handle_exit(minishell);
+		handle_exit(minishell, curr);
 	if (!ft_strcmp(name, "pwd") && (i = 1))
 		handle_pwd(curr);
 	if (!ft_strcmp(name, "env") && (i = 1))
-		handle_env(minishell);
+		handle_env(minishell, curr);
 	if (!ft_strcmp(name, "export") && (i = 1))
 		handle_export(minishell, curr);
 	if (!ft_strcmp(name, "cd") && (i = 1))

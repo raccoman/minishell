@@ -31,7 +31,9 @@ void	parse_dquote(char **input, char *token, int *i)
 	{
 		if (*str == '\"')
 			break ;
-		if (*str == '\\' && ft_contains("\';|\\", str[1]))
+		if (*str == '\\' && str[1] == '\"')
+			token[(*i)++] = *str++;
+		else if (*str == '\\' && ft_contains("\';|\\", str[1]))
 			str++;
 		token[(*i)++] = *str++;
 	}
@@ -52,8 +54,11 @@ char	*get_next_token(char **input)
 			parse_quote(input, token, &i);
 		if (**input == '\"')
 			parse_dquote(input, token, &i);
-		if (**input == '\\' && (*input)[1] != '$')
-			(*input)++;	
+		if (**input == '\\')
+		{
+			token[i++] = **input;
+			(*input)++;
+		}
 		token[i++] = **input;
 		(*input)++;
 	}
@@ -149,7 +154,7 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 		if (!*splitted)
 			break ;
 		buff = get_next_token(&splitted);
-		add_argument(rslt, buff);
+		rslt->arguments = ft_append_element(rslt->arguments, buff);
 		while (*splitted == ' ')
 			splitted++;
 		if (*splitted == '<')
@@ -185,8 +190,6 @@ t_simple_cmd	*create_scmd(t_command *command, char *splitted)
 
 void	parse_input(t_minishell *minishell)
 {
-	// non gestisco ancora ' " 
-	// IMPORTANTE: do per scontato che libero la lista di comandi (s_commands) ogni volta
 	char			**simple_cmds;
 	int				i;
 	t_simple_cmd	*tmp;
@@ -195,10 +198,10 @@ void	parse_input(t_minishell *minishell)
 	i = 0;
 	while (simple_cmds[i])
 	{
-		tmp = create_scmd(minishell->command, simple_cmds[i++]); // questo riempie la struttura t_simple_cmd e nel caso aggiorna infile e outfile
+		tmp = create_scmd(minishell->command, simple_cmds[i++]);
 		if (!tmp)
 			return (clear_commands(minishell->command));
-		add_command(minishell->command, tmp); // questo aggiunge il nuovo simple commands alla lista dentro command
+		add_command(minishell->command, tmp);
 	}
 	ft_free2D((void **)simple_cmds);
 }

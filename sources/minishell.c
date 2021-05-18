@@ -19,6 +19,7 @@ void	configure_env(t_minishell *minishell, char	**env)
 	}
 	minishell->session_env = NULL;
 	single_assign(minishell, ft_strdup("?=0"));
+	minishell->exported = NULL;
 }
 
 void	handle_signal(int signal)

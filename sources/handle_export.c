@@ -15,81 +15,90 @@ void	single_export(t_minishell *minishell, char *export)
 		ft_lstadd_back(&minishell->main_env, ft_lstnew(ft_strdup(env->data)));
 		ft_lstrmv_if(&minishell->session_env, export, &cmd_cmp, &free);
 	}
+	else if (!find_env(minishell->exported, export))
+		ft_lstadd_back(&minishell->exported, ft_lstnew(ft_strdup(export)));
 }
 
-char	*get_name(const char *env)
+void	sort_matrix(char **matrix, int len)
 {
-	int	i;
-	char	*name;
+	int		unordered;
+	char	*tmp;
+	int		i;
+	char	*name1;
+	char	*name2;
 
-	i = 0;
-	while (env[i] && env[i] != '=')
-		i++;
-	name = malloc(sizeof(char) * (i + 1));
-	i = 0;
-	while (env[i] && env[i] != '=')
+	unordered = 0;
+	i = -1;
+	while (++i < len - 1)
 	{
-		name[i] = env[i];
-		i++;
+		name1 = env_name(matrix[i]);
+		name2 = env_name(matrix[i + 1]);
+		if (ft_strcmp(name1, name2) > 0)
+		{
+			unordered = 1;
+			tmp = matrix[i];
+			matrix[i] = matrix[i + 1];
+			matrix[i + 1] = tmp;
+		}
+		free(name1);
+		free(name2);
 	}
-	name[i] = 0;
-	return (name);
+	if (unordered)
+		return (sort_matrix(matrix, len - 1));
 }
-char	*get_value(const char *env)
-{
-	int	offset;
-	int	i;
-	char	*value;
 
-	offset = 0;
-	while (env[offset] && env[offset] != '=')
-		offset++;
-	offset++;
-	i = 0;
-	while (env[i + offset])
-		i++;
-	value = malloc(sizeof(char) * (i + 1));
-	i = 0;
-	while (env[i + offset])
+void	print_declare(char **envs)
+{
+	int		i;
+	char	**splitted;
+
+	i = -1;
+	while (envs[++i])
 	{
-		value[i] = env[i + offset];
-		i++;
+		if (!ft_contains(envs[i], '='))
+		{
+			printf("declare -x %s\n", envs[i]);
+			continue ;
+		}
+		splitted = ft_split(envs[i], '=');
+		if (!splitted[1])
+			printf("declare -x %s=\"\"\n", splitted[0]);
+		else
+			printf("declare -x %s=\"%s\"\n", splitted[0], splitted[1]);
+		ft_free2D((void **)splitted);
 	}
-	value[i] = 0;
-	return (value);
 }
 
 void	no_args(t_minishell *minishell)
 {
-	t_list	*env;
-	char	*current;
-	char	*name;
-	char	*value;
+	char	**envs;
+	int		i;
+	t_list	*tmp;
 
-	env = minishell->main_env;
-	while (env)
+	envs = get_env_matrix(minishell->main_env);
+	tmp = minishell->exported;
+	while (tmp)
 	{
-		current = (char *)env->data;
-		name = get_name(current);
-		value = get_value(current);
-		printf("declare -x %s=\"%s\"\n", name, value);
-		free(name);
-		free(value);
-		env = env->next;
+		envs = ft_append_element(envs, ft_strdup((char *)tmp->data));
+		tmp = tmp->next;
 	}
+	i = 0;
+	while (envs[i])
+		i++;
+	sort_matrix(envs, i);
+	print_declare(envs);
 }
 
 void	handle_export(t_minishell *minishell, t_simple_cmd *curr)
 {
-	int 	i;
-	char 	**args;
+	int		i;
+	char	**args;
 
 	args = &(curr->arguments[1]);
-	if (!args[0])
-	{
-		no_args(minishell);
+	if (!check_option("export: ", *args))
 		return ;
-	}
+	if (!args[0])
+		return (no_args(minishell));
 	i = 0;
 	while (args[i])
 		single_export(minishell, args[i++]);

@@ -4,7 +4,7 @@ DEBUG =			debug
 
 #Compiler
 CC = 			gcc
-CFLAGS = 		#-Wall -Wextra -Werror
+CFLAGS = 		-Wall -Wextra -Werror
 LIBRARIES =		$(LIBFT_DIR)/$(LIBFT)
 CFLAG = 		-c
 OFLAG =			-o

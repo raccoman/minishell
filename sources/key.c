@@ -227,7 +227,7 @@ void	handle_key(t_minishell *minishell, t_key key)
 		if (!minishell->input || !*minishell->input)
 		{
 			printf("exit\n");
-			handle_exit(minishell);
+			handle_exit(minishell, NULL);
 		}
 		else
 			printf("\a");

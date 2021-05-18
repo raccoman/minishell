@@ -1,33 +1,30 @@
 #include "minishell.h"
 
-int	is_assign(const char *str)
+char	*env_name(const char *env)
 {
-	int	i;
+	int		i;
+	char	*name;
 
 	i = 0;
-	while (str[i])
+	while (env[i] && env[i] != '=')
+		i++;
+	name = malloc(sizeof(char) * (i + 1));
+	i = 0;
+	while (env[i] && env[i] != '=')
 	{
-		if (i && str[i] == '=')
-			return (1);
+		name[i] = env[i];
 		i++;
 	}
-	return(0);
+	name[i] = 0;
+	return (name);
 }
 
 int	cmd_cmp(char *s1, char *s2)
 {
-	int	i;
 	int	len;
 
 	len = ft_strlen(s2);
-	if (len <= 0)
-		return (0);
-	i = 0;
-	while (i < len && s1[i] && s1[i] == s2[i])
-		i++;
-	if (i == len)
-		return (0);
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+	return (ft_strncmp(s1, s2, len));
 }
 
 t_list	*find_env(t_list *env, char *name)

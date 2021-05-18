@@ -1,13 +1,7 @@
 TODOS:
 
-- aggiungere a export senza argomenti le variabili senza valore che non stanno in main_env
+- controllare i memory leak in ogni angolo
 
-- gestire bene le malloc in modo da non farne nei figli che chiamano execve (ma anche no)
+- norminettare safe_split.c parser.c minishell.c key.c history.c main.c
 
-- exit che riceve un numero fa exit con quel numero, se no esce con il valore di $?
-
-- echo -nnnnnnnnnnn conta come -n
-
-- export sorta in ordine alfabetico (ma anche no)
-
-- rifare il parsing per gestire ' " \ (half done)
+- trovare bug nella gestione di ' " \

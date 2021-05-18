@@ -20,24 +20,6 @@ void    jump_quote(char *input, int *i, char type)
     (*i)++;
 }
 
-char    **add_splitted(char **splitted, char *new)
-{
-    int     i;
-    char    **safe;
-
-    i = 0;
-    while (splitted[i])
-        i++;
-    safe = malloc((i + 2) * sizeof(char *));
-    i = -1;
-    while (splitted[++i])
-        safe[i] = splitted[i];
-    safe[i++] = new;
-    safe[i] = 0;
-    free(splitted);
-    return (safe);    
-}
-
 char    **safe_split(char *input, char del)
 {
     char    **splitted;
@@ -61,7 +43,7 @@ char    **safe_split(char *input, char del)
         {
             token = malloc((i - start + 1));
             ft_strlcpy(token, input + start, i - start + 1);
-            splitted = add_splitted(splitted, token);
+            splitted = ft_append_element(splitted, token);
             if (!input[i])
                 break ;
             start = ++i;

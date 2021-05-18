@@ -1,5 +1,17 @@
 #include "minishell.h"
 
+short	is_option_n(char *str)
+{
+	if (*str++ != '-')
+		return (0);
+	while (*str)
+	{
+		if (*str++ != 'n')
+			return (0);
+	}
+	return (1);
+}
+
 void	handle_echo(t_minishell *minishell, t_simple_cmd *curr)
 {
 	int		i;
@@ -10,13 +22,13 @@ void	handle_echo(t_minishell *minishell, t_simple_cmd *curr)
 	args = &(curr->arguments[1]);
 	i = 0;
 	n_flag = 0;
-	if (*args && !ft_strcmp("-n", *args))
+	while (args[i] && is_option_n(args[i]))
 		n_flag = ++i;
 	if (n_flag)
 	{
 		if (minishell->prompt)
 			free(minishell->prompt);
-		minishell->prompt = ft_strmaxjoin(&(args[1]), " ");
+		minishell->prompt = ft_strmaxjoin(&(args[i]), " ");
 		return ;
 	}
 	while (args[i] && args[i + 1])

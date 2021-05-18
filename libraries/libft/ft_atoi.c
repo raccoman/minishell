@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgiordan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/14 16:04:44 by mgiordan          #+#    #+#             */
-/*   Updated: 2021/04/14 16:04:46 by mgiordan         ###   ########.fr       */
+/*   Created: 2021/01/11 18:43:05 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/01/12 15:31:15 by mgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ short	ft_isspace(char c)
 	return (0);
 }
 
-long	ft_atol(const char *num)
+int		ft_atoi(const char *num)
 {
-	long	return_value;
+	int		return_value;
 	short	negative;
 	int		i;
 

@@ -2,17 +2,13 @@
 
 void	clear_commands(t_command *command)
 {
-	int				i;
 	t_simple_cmd	*tmp;
 	t_simple_cmd	*list_copy;
 
 	list_copy = command->s_commands;
 	while (list_copy)
 	{
-		i = 0;
-		while (list_copy->arguments[i])
-			free(list_copy->arguments[i++]);
-		free(list_copy->arguments);
+		ft_free2D((void **)list_copy->arguments);
 		tmp = list_copy->next;
 		free(list_copy);
 		list_copy = tmp;
@@ -30,28 +26,6 @@ void	clear_commands(t_command *command)
 	}
 	command->append = 0;
 	command->here_doc = 0;
-}
-
-void	add_argument(t_simple_cmd *s_cmd, char *new_arg)
-{
-	char	**new_arguments;
-	int		i;
-
-	i = 0;
-	while(s_cmd->arguments && s_cmd->arguments[i])
-		i++;
-	new_arguments = malloc((i + 2) * sizeof(char *));
-	i = 0;
-	while(s_cmd->arguments && s_cmd->arguments[i])
-	{
-		new_arguments[i] = s_cmd->arguments[i];
-		i++;
-	}
-	new_arguments[i++] = new_arg;
-	new_arguments[i] = 0;
-	if (s_cmd->arguments)
-		free(s_cmd->arguments);
-	s_cmd->arguments = new_arguments;
 }
 
 void	add_command(t_command *command, t_simple_cmd *s_cmd)

@@ -1,19 +1,5 @@
 #include "minishell.h"
 
-/*void	print_error(char *formatted, char *arg)
-{
-	int	tmpout;
-
-	tmpout = dup(1);
-	dup2(2, 1);
-	if (arg)
-		printf(formatted, arg);
-	else
-		printf("%s", formatted);
-	dup2(tmpout, 1);
-	close(tmpout);
-}*/
-
 void	print_error(char *prefix, char *error_msg)
 {
 	int		tmpout;
@@ -35,7 +21,21 @@ void	print_error(char *prefix, char *error_msg)
 		free(error_msg);
 }
 
-int is_path(char *str)
+int	is_assign(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (i && str[i] == '=')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_path(char *str)
 {
 	while (*str)
 	{
@@ -45,35 +45,16 @@ int is_path(char *str)
 	return (0);
 }
 
-/*int	is_empty(char **args)
+short	check_option(char *cmd, char *first)
 {
-	int	k;
+	char	*error_prefix;
 
-	if (!args[0])
-		return (1);
-	k = 0;
-	while (args[0][k])
+	if (first && *first == '-')
 	{
-		if (!ft_isspace(args[0][k]))
-			return (0);
-		k++;
+		error_prefix = ft_strjoin(cmd, first);
+		print_error(error_prefix, "Invalid option");
+		free(error_prefix);
+		return (0);
 	}
 	return (1);
-}*/
-
-short	is_option(char *str)
-{
-	if (*str == '-')
-		return (1);
-	return (0);
-}
-
-char	get_last_char(int fd)
-{
-	char	prev;
-	char	c;
-
-	while (read(fd, &c, 1) > 0)
-		prev = c;
-	return (prev);
 }
