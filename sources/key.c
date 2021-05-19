@@ -125,13 +125,11 @@ void	handle_enter(t_minishell *minishell)
 
 	printf(CC_RESET "\n");
 	if (!first_check(minishell, minishell->input))
-		return ;	
+		return ;
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
-		//single_input = split_semicolon(minishell->input);
 		single_input = safe_split(minishell->input, ';');
-		//single_input = ft_split(minishell->input, ';');
 		free(minishell->input);
 		i = 0;
 		while (single_input[i])
@@ -242,7 +240,6 @@ void	handle_key(t_minishell *minishell, t_key key)
 			return;
 		}
 		minishell->cursor--;
-		calculate_quote(minishell, minishell->input[minishell->cursor]);
 		minishell->input = ft_remove_at(minishell->input, minishell->cursor);
 		update_history(minishell->history, minishell->input);
 		prompt(minishell, "\r");

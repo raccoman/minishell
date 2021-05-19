@@ -1,101 +1,59 @@
 #include "minishell.h"
 
-int	handle_here_doc(char *delim, int single)
+int	handle_here_doc(char *delim, int single, int *fdpipe, char *buffer)
 {
-	char	*buffer;
-	char	*safe;
 	char	c;
 	t_key	key;
-	int		fdpipe[2];
 
-	pipe(fdpipe);
-	g_minishell->quotes.done = 0;
-	g_minishell->pid = fork();
-	if (!g_minishell->pid)
+	reset_input(g_minishell);
+	while (1)
 	{
-		buffer = malloc(1);
-		*buffer = 0;
-		free(g_minishell->input);
-		g_minishell->input = ft_strdup("");
-		prompt(g_minishell, "");
-		g_minishell->cursor = 0;
-		while (1)
+		key = read_wrapper(g_minishell, &c);
+		if (!handle_eof(g_minishell, key))
+			break ;
+		if (key == KEY_ENTER)
 		{
-			ft_fflush(stdout);
-			tcsetattr(0, TCSANOW, &g_minishell->our_cfg);
-			read(0, &c, 1);
-			key = get_key(c);
-			tcsetattr(0, TCSANOW, &g_minishell->sys_cfg);
-			if (key == KEY_EOF)
-			{
-				if (!g_minishell->input || !*g_minishell->input)
-				{
-					printf("\n");
-					break ;
-				}
-				printf("\a");
-				continue ;
-			}
-			if (key == KEY_ENTER)
-			{
-				printf("\n");
-				if (!ft_strcmp(g_minishell->input, delim))
-					break ;
-				safe = g_minishell->input;
-				g_minishell->input = ft_strjoin(g_minishell->input, "\n");
-				free(safe);
-				safe = buffer;
-				buffer = ft_strjoin(buffer, g_minishell->input);
-				free(safe);
-				free(g_minishell->input);
-				g_minishell->input = ft_strdup("");
-				prompt(g_minishell, "");
-				g_minishell->cursor = 0;
-			}
-			else if (key != KEY_ALPHANUMERIC)
-				handle_key(g_minishell, key);
-			else
-			{
-				g_minishell->input = ft_insert(g_minishell->input, c, g_minishell->cursor);
-				update_history(g_minishell->history, g_minishell->input);
-				g_minishell->cursor++;
-				prompt(g_minishell, "\r"); // il prompt dovrebbe essere '>' o 'heredoc >'
-			}
+			printf("\n");
+			if (!ft_strcmp(g_minishell->input, delim))
+				break ;
+			buffer = update_buffer(g_minishell, buffer);
 		}
-		ft_fflush(stdout);
-		write(fdpipe[1], buffer, ft_strlen(buffer));
-		free(buffer);
-		exit(0);
+		else if (key != KEY_ALPHANUMERIC && key != KEY_EOF)
+			handle_key(g_minishell, key);
+		else if (key != KEY_EOF)
+			update_input(g_minishell, c);
 	}
-	waitpid(g_minishell->pid, NULL, 0);
-	close(fdpipe[1]);
-	printf(CC_RESET);
-	ft_fflush(stdout);
-	if (single)
-	{
-		dup2(*fdpipe, 0);
-		close(*fdpipe);
-	}
-	g_minishell->quotes.done = 1;
-	return (*fdpipe);
+	write(fdpipe[1], buffer, ft_strlen(buffer));
+	free(buffer);
+	exit(0);
 }
 
 int	redirect_infile(char *infile, int tmpin, int here_doc, int single)
 {
-	int	fdin;
+	int	fds[2];
 
 	if (here_doc)
-		return (handle_here_doc(infile, single));
-	if (infile)
-		fdin = open(infile, O_RDONLY);
+	{
+		pipe(fds);
+		g_minishell->pid = fork();
+		if (!g_minishell->pid)
+			handle_here_doc(infile, single, fds, NULL);
+		waitpid(g_minishell->pid, NULL, 0);
+		g_minishell->pid = -1;
+		close(fds[1]);
+		printf(CC_RESET);
+		ft_fflush(stdout);
+	}
+	else if (infile)
+		*fds = open(infile, O_RDONLY);
 	else
-		fdin = dup(tmpin);
+		*fds = dup(tmpin);
 	if (single)
 	{
-		dup2(fdin, 0);
-		close(fdin);
+		dup2(*fds, 0);
+		close(*fds);
 	}
-	return (fdin);
+	return (*fds);
 }
 
 void	redirect_outfile(char *outfile, int tmpout, int append)

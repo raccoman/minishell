@@ -26,33 +26,38 @@ void	prompt(t_minishell *minishell, const char *prefix)
 		printf("\033[1D");
 }
 
-void	watermark()
+void	watermark(void)
 {
 	printf("%c[1;1H%c[2J", 27, 27);
 	printf("\n" CC_CYN
-		   "███╗   ███╗ █████╗ ██╗  ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     \n"
-		   "████╗ ████║██╔══██╗╚██╗██╔╝██║██╔════╝██║  ██║██╔════╝██║     ██║     \n"
-		   "██╔████╔██║███████║ ╚███╔╝ ██║███████╗███████║█████╗  ██║     ██║     \n"
-		   "██║╚██╔╝██║██╔══██║ ██╔██╗ ██║╚════██║██╔══██║██╔══╝  ██║     ██║     \n"
-		   "██║ ╚═╝ ██║██║  ██║██╔╝ ██╗██║███████║██║  ██║███████╗███████╗███████╗\n"
-		   "╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n"
-		   CC_WHT "Made by " CC_UGRN "raccoman" CC_WHT " and " CC_UGRN "mgiordan" CC_RESET "\n");
+		   "███╗   ███╗ █████╗ ██╗  ██╗██╗███\
+████╗██╗  ██╗███████╗██╗     ██╗     \n"
+		   "████╗ ████║██╔══██╗╚██╗██╔╝██║██╔═\
+═══╝██║  ██║██╔════╝██║     ██║     \n"
+		   "██╔████╔██║███████║ ╚███╔╝ ██║████\
+███╗███████║█████╗  ██║     ██║     \n"
+		   "██║╚██╔╝██║██╔══██║ ██╔██╗ ██║╚═══\
+═██║██╔══██║██╔══╝  ██║     ██║     \n"
+		   "██║ ╚═╝ ██║██║  ██║██╔╝ ██╗██║████\
+███║██║  ██║███████╗███████╗███████╗\n"
+		   "╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═══\
+═══╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n"
+		   CC_WHT "Made by " CC_UGRN "raccoman"\
+CC_WHT " and " CC_UGRN "mgiordan" CC_RESET "\n");
 }
 
 int	main(int argc, char *argv[], char *env[])
 {
 	g_minishell = malloc(sizeof(t_minishell));
-
 	(void)argc;
 	(void)argv;
 	configure(g_minishell, env);
 	watermark();
 	printf(CC_CYN "maxishell $> " CC_MAG);
-	while (g_minishell->running)
+	while (1)
 	{
 		ft_fflush(stdout);
 		get_input(g_minishell);
-		reset_quote(g_minishell);
 		handle_enter(g_minishell);
 	}
 	terminate(g_minishell);

@@ -28,62 +28,28 @@ void	delete_arguments(t_simple_cmd *curr)
 	curr->arguments = new_arg;
 }
 
-char	*expand_var(t_minishell *minishell, char *token, int *i)
+int	is_expandable(t_minishell *minishell, char *token, char **result, int *i)
 {
-	char	*var_name;
-	char	*var_value;
-
-	(*i)++;
-	var_name = NULL;
-	var_name = ft_append(var_name, 0);
-	while (token[*i] && !ft_contains(" \'\"\\", token[*i]))
-		var_name = ft_append(var_name, token[(*i)++]);
-	var_value = get_env_value(minishell, var_name);
-	free(var_name);
-	if (var_value)
-		return (ft_strdup(var_value));
-	return(ft_strdup(""));
-}
-
-char	*expand_quote(char *token, int *i)
-{
-	char	*quote;
-
-	(*i)++;
-	quote = NULL;
-	quote = ft_append(quote, 0);
-	while (token[*i] != '\'')
-		quote = ft_append(quote, token[(*i)++]);
-	(*i)++;
-	return (quote);
-}
-
-char	*expand_dquote(t_minishell *minishell, char *token, int *i)
-{
-	char	*dquote;
-	char	*join;
+	char	*expanded;
 	char	*safe;
 
-	(*i)++;
-	dquote = NULL;
-	dquote = ft_append(dquote, 0);
-	while (token[*i] != '\"')
+	expanded = NULL;
+	if (token[*i] == '$' && token[*i + 1]
+		&& !ft_contains(" \'\"", token[*i + 1]))
+		expanded = expand_var(minishell, token, i);
+	else if (token[*i] == '\'')
+		expanded = expand_quote(token, i);
+	else if (token[*i] == '\"')
+		expanded = expand_dquote(minishell, token, i);
+	if (expanded)
 	{
-		if (token[*i] == '$' && !ft_contains(" \'\"", token[*i + 1]))
-		{
-			join = expand_var(minishell, token, i);
-			safe = dquote;
-			dquote = ft_strjoin(dquote, join);
-			free(safe);
-			free(join);
-			continue ;
-		}
-		if (token[*i] == '\\' && ft_contains("$\"", token[*i + 1]))
-			(*i)++;
-		dquote = ft_append(dquote, token[(*i)++]);
+		safe = *result;
+		*result = ft_strjoin(*result, expanded);
+		free(safe);
+		free(expanded);
+		return (1);
 	}
-	(*i)++;
-	return (dquote);
+	return (0);
 }
 
 char	*expand_token(t_minishell *minishell, char *token)
@@ -98,21 +64,8 @@ char	*expand_token(t_minishell *minishell, char *token)
 	i = 0;
 	while (token[i])
 	{
-		join = NULL;
-		if (token[i] == '$' && token[i + 1] && !ft_contains(" \'\"", token[i + 1]))
-			join = expand_var(minishell, token, &i);
-		else if (token[i] == '\'')
-			join = expand_quote(token, &i);
-		else if (token[i] == '\"')
-			join = expand_dquote(minishell, token, &i);
-		if (join)
-		{
-			safe = result;
-			result = ft_strjoin(result, join);
-			free(safe);
-			free(join);
+		if (is_expandable(minishell, token, &result, &i))
 			continue ;
-		}
 		if (token[i] == '\\')
 			i++;
 		result = ft_append(result, token[i++]);
@@ -121,7 +74,7 @@ char	*expand_token(t_minishell *minishell, char *token)
 	return (result);
 }
 
-void	expander(t_minishell *minishell, t_simple_cmd *curr)
+int	expander(t_minishell *minishell, t_simple_cmd *curr)
 {
 	int	i;
 
@@ -133,4 +86,5 @@ void	expander(t_minishell *minishell, t_simple_cmd *curr)
 		delete_arguments(curr);
 		curr = curr->next;
 	}
+	return (1);
 }

@@ -1,82 +1,57 @@
 #include "minishell.h"
 
-void	execute_path(t_simple_cmd *cmd, t_minishell *minishell, char **env_matrix)
+t_builtin	is_builtin(char *name)
 {
-	int		len;
-	int		i;
-	int		j;
-	char	*path;
-
-	path = *cmd->arguments;
-	len = ft_strlen(path);
-	i = len;
-	while (i && path[i - 1] != '\\')
-		i--;
-	*cmd->arguments = malloc(len - i + 1);
-	j = 0;
-	while (path[i])
-		(*cmd->arguments)[j++] = path[i++];
-	(*cmd->arguments)[j] = 0;
-	execve(path, cmd->arguments, env_matrix);
-	ft_free2D((void **)env_matrix);
-}
-
-void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell)
-{
-	char	**paths;
-	char	**env_matrix;
-	char	*try_path;
-	char	*safe;
-	int		i;
-
-	env_matrix =  get_env_matrix(minishell->main_env);
-	if (is_path(*cmd->arguments))
-		return (execute_path(cmd, minishell, env_matrix));
-	paths = ft_split(get_env_value(minishell, "PATH"), ':');
-	i = -1;
-	while (paths[++i])
-	{
-		try_path = ft_strjoin(paths[i], "/");
-		safe = try_path;
-		try_path = ft_strjoin(try_path, *cmd->arguments);
-		free(safe);
-		execve(try_path, cmd->arguments, env_matrix);
-		if (errno != ENOENT)
-			break ;
-	}
-	ft_free2D((void **)paths);
-	ft_free2D((void **)env_matrix);
+	if (!ft_strcmp(name, "echo"))
+		return (BUILTIN_ECHO);
+	if (!ft_strcmp(name, "exit"))
+		return (BUILTIN_EXIT);
+	if (!ft_strcmp(name, "pwd"))
+		return (BUILTIN_PWD);
+	if (!ft_strcmp(name, "env"))
+		return (BUILTIN_ENV);
+	if (!ft_strcmp(name, "export"))
+		return (BUILTIN_EXPORT);
+	if (!ft_strcmp(name, "cd"))
+		return (BUILTIN_CD);
+	if (!ft_strcmp(name, "unset"))
+		return (BUILTIN_UNSET);
+	if (is_assign(name))
+		return (BUILTIN_ASSIGN);
+	return (NONE);
 }
 
 int	builtins(char *name, t_simple_cmd *curr, t_minishell *minishell)
 {
-	int	i;
+	t_builtin	which_builtin;
 
-	i = 0;
+	which_builtin = is_builtin(name);
+	if (which_builtin == NONE)
+		return (0);
 	errno = 0;
-	if (!ft_strcmp(name, "echo") && (i = 1))
+	if (which_builtin == BUILTIN_ECHO)
 		handle_echo(minishell, curr);
 	single_assign(minishell, ft_strdup("?=0"));
-	if (!ft_strcmp(name, "exit") && (i = 1))
+	if (which_builtin == BUILTIN_EXIT)
 		handle_exit(minishell, curr);
-	if (!ft_strcmp(name, "pwd") && (i = 1))
+	if (which_builtin == BUILTIN_PWD)
 		handle_pwd(curr);
-	if (!ft_strcmp(name, "env") && (i = 1))
+	if (which_builtin == BUILTIN_ENV)
 		handle_env(minishell, curr);
-	if (!ft_strcmp(name, "export") && (i = 1))
+	if (which_builtin == BUILTIN_EXPORT)
 		handle_export(minishell, curr);
-	if (!ft_strcmp(name, "cd") && (i = 1))
+	if (which_builtin == BUILTIN_CD)
 		handle_cd(minishell, curr);
-	if (!ft_strcmp(name, "unset") && (i = 1))
+	if (which_builtin == BUILTIN_UNSET)
 		handle_unset(minishell, curr);
-	if (is_assign(name) && (i = 1))
+	if (which_builtin == BUILTIN_ASSIGN)
 		handle_assign(minishell, curr);
-	return (i);
+	return (1);
 }
 
 void	set_statusenv(t_minishell *minishell, int code)
 {
-	char *statustoa;
+	char	*statustoa;
 
 	statustoa = ft_itoa(code);
 	if ((code) == 2)
@@ -88,11 +63,11 @@ void	set_statusenv(t_minishell *minishell, int code)
 	free(statustoa);
 }
 
-void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_stds)
+void	execute_single_cmd(t_minishell *minishell,
+	t_command *command, int *tmp_stds)
 {
 	t_simple_cmd	*cmd;
 	int				status;
-	char			*statustoa;
 
 	cmd = command->s_commands;
 	if (!(*cmd->arguments))
@@ -113,57 +88,17 @@ void	execute_single_cmd(t_minishell *minishell, t_command *command, int *tmp_std
 	minishell->pid = -1;
 }
 
-void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds)
-{
-	t_simple_cmd	*curr;
-	int				fdin;
-	int				fdpipe[2];
-	int				status;
-
-	curr = command->s_commands;
-	fdin = redirect_infile(command->infile, *tmp_stds, command->here_doc, 0);
-	while (curr)
-	{
-		dup2(fdin, 0);
-		close(fdin);
-		if (!curr->next)
-			redirect_outfile(command->outfile, tmp_stds[1], command->append);
-		else
-		{
-			pipe(fdpipe);
-			fdin = fdpipe[0];
-			dup2(fdpipe[1], 1);
-			close(fdpipe[1]);
-		}
-		if (!(*curr->arguments))
-		{
-			curr = curr->next;
-			continue ;
-		}
-		minishell->pid = fork();
-		if (!minishell->pid)
-		{
-			if (!builtins(curr->arguments[0], curr, minishell))
-			{
-				execute_non_builtin(curr, minishell);
-				print_error(curr->arguments[0], strerror(errno));
-			}
-			exit(errno);
-		}
-		waitpid(minishell->pid, &status, 0);
-		curr = curr->next;
-	}
-	set_statusenv(minishell, status / 256);
-	minishell->pid = -1;
-}
-
 void	executor(t_minishell *minishell, t_command *command)
 {
 	int	tmp_stds[2];
 
 	if (!command->s_commands)
 		return (clear_commands(command));
-	expander(minishell, command->s_commands);
+	if (!expander(minishell, command->s_commands))
+	{
+		clear_commands(command);
+		return ;
+	}
 	tmp_stds[0] = dup(0);
 	tmp_stds[1] = dup(1);
 	if (!command->s_commands->next)
@@ -171,5 +106,5 @@ void	executor(t_minishell *minishell, t_command *command)
 	else
 		execute_pipeline(minishell, command, tmp_stds);
 	restore_stds(tmp_stds);
-	clear_commands(command);	
+	clear_commands(command);
 }

@@ -4,12 +4,7 @@ short	is_option_n(char *str)
 {
 	if (*str++ != '-')
 		return (0);
-	while (*str)
-	{
-		if (*str++ != 'n')
-			return (0);
-	}
-	return (1);
+	return (ft_onlythischar(str, 'n'));
 }
 
 void	handle_echo(t_minishell *minishell, t_simple_cmd *curr)

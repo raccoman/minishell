@@ -2,6 +2,10 @@ TODOS:
 
 - controllare i memory leak in ogni angolo
 
-- norminettare safe_split.c parser.c minishell.c key.c history.c main.c
+- norminettare key.c libft
 
 - trovare bug nella gestione di ' " \
+
+- migliorare il syntax error in safe_split (ma anche no)
+
+- migliorare assign (arg=3=4);

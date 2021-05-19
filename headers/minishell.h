@@ -27,7 +27,7 @@ typedef struct	s_history
 
 typedef	struct	s_simple_cmd
 {
-	char	**arguments; // arguments[0] é il comando in se
+	char	**arguments;
 	struct s_simple_cmd	*next;
 }			t_simple_cmd;
 
@@ -39,16 +39,6 @@ typedef struct	s_command
 	int				here_doc;
 	t_simple_cmd	*s_commands;
 }	t_command;
-
-typedef struct	s_quotes
-{
-	int		a;
-	int		b;
-	char	*input;
-	int		cursor;
-	int		done;
-	int		running;
-}				t_quotes;
 
 typedef struct	s_minishell
 {
@@ -65,7 +55,6 @@ typedef struct	s_minishell
 	t_history		*history;
 	t_command		*command;
 	pid_t			pid;
-	t_quotes		quotes;
 }				t_minishell;
 
 typedef enum	e_key
@@ -88,8 +77,21 @@ typedef enum	e_key
 	KEY_LEFT,
 	KEY_CANCEL,
 	KEY_HOME,
-	KEY_END,
+	KEY_END
 }				t_key;
+
+typedef enum	e_builtin
+{
+	BUILTIN_ECHO,
+	BUILTIN_EXIT,
+	BUILTIN_PWD,
+	BUILTIN_ENV,
+	BUILTIN_EXPORT,
+	BUILTIN_CD,
+	BUILTIN_UNSET,
+	BUILTIN_ASSIGN,
+	NONE
+}				t_builtin;
 
 t_minishell	*g_minishell;
 
@@ -101,17 +103,35 @@ void	print_error(char *prefix, char *error_msg);
 int		is_assign(const char *str);
 int		is_path(char *str);
 short	check_option(char *cmd, char *first);
+int		check_quote(char *str);
+
+void	get_input(t_minishell *minishell);
+t_key	read_wrapper(t_minishell *minishell, char *c);
+void    update_input(t_minishell *minishell, char c);
+
+char	*expand_dquote(t_minishell *minishell, char *token, int *i);
+char	*expand_quote(char *token, int *i);
+char	*expand_var(t_minishell *minishell, char *token, int *i);
+
+int		check_file(t_minishell *minishell, char **input, char *error_msg);
+char	*get_next_token(char **input);
 
 void	prompt(t_minishell *minishell, const char *prefix);
 void	parse_input(t_minishell *minishell);
 int		builtins(char *name, t_simple_cmd *curr, t_minishell *minishell);
 void    executor(t_minishell *minishell, t_command *command);
 void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell);
-void	expander(t_minishell *minishell, t_simple_cmd *curr);
+void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds);
+int		expander(t_minishell *minishell, t_simple_cmd *curr);
+void	set_statusenv(t_minishell *minishell, int code);
 
 t_key	get_key(char c);
 void	handle_key(t_minishell *minishell, t_key key);
 void	handle_enter(t_minishell *minishell);
+
+int	handle_eof(t_minishell *minishell, t_key key);
+char	*update_buffer(t_minishell *minishell, char *buffer);
+void	reset_input(t_minishell *minishell);
 
 void	clear_history(t_history *history);
 void	init_history(t_minishell *minishell);
@@ -142,12 +162,9 @@ void	handle_cd(t_minishell *minishell, t_simple_cmd *curr);
 void	single_export(t_minishell *minishell, char *export);
 void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
 
-void	reset_quote(t_minishell *minishell);
-void	calculate_quote(t_minishell *minishell, char c);
-void	get_input_quote(t_minishell *minishell);
-int		check_quote(char *str);
-
 char    **safe_split(char *input, char del);
 
+void    handle_sigquit(int signal);
+void    handle_sigint(int signal);
 
 #endif

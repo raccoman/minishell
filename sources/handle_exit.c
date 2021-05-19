@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	clear_all(t_minishell *minishell)
+void	terminate(t_minishell *minishell)
 {
 	free(minishell->input);
 	free(minishell->prompt);
@@ -34,6 +34,6 @@ void	handle_exit(t_minishell *minishell, t_simple_cmd *curr)
 			exit_value = ft_atoi(*args);
 	}
 	printf(CC_WHT "Bye bye" CC_RESET "\n");
-	clear_all(minishell);
+	terminate(minishell);
 	exit((exit_value + 256) % 256);
 }
