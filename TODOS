@@ -2,7 +2,7 @@ TODOS:
 
 - controllare i memory leak in ogni angolo
 
-- norminettare key.c libft
+- norminettare libft
 
 - trovare bug nella gestione di ' " \
 

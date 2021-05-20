@@ -167,4 +167,11 @@ char    **safe_split(char *input, char del);
 void    handle_sigquit(int signal);
 void    handle_sigint(int signal);
 
+void	left_right(t_minishell *sh, t_key key);
+void	eof_home_end(t_minishell *sh, t_key key);
+void	copy_paste(t_minishell *sh, t_key key);
+void	up_down(t_minishell *sh, t_key key);
+int		first_check(t_minishell *minishell, char *input);
+void	adjust_prompt(t_minishell *minishell);
+
 #endif
