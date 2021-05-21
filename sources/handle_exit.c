@@ -3,10 +3,12 @@
 void	terminate(t_minishell *minishell)
 {
 	free(minishell->input);
+	ft_free2D((void **)minishell->semicols);
 	free(minishell->prompt);
 	free(minishell->clipboard);
 	clear_history(minishell->history);
 	clear_commands(minishell->command);
+	free(minishell->command);
 	ft_lstclear(&minishell->main_env);
 	ft_lstclear(&minishell->session_env);
 	ft_lstclear(&minishell->exported);

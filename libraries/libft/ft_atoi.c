@@ -28,7 +28,7 @@ short	ft_isspace(char c)
 	return (0);
 }
 
-int		ft_atoi(const char *num)
+int	ft_atoi(const char *num)
 {
 	int		return_value;
 	short	negative;

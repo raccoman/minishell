@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_insert.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/21 14:49:54 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/21 14:49:56 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 char	*__new_str(char c)
@@ -15,7 +27,7 @@ char	*__new_str(char c)
 char	*ft_insert(char *str, int c, int pos)
 {
 	char	*new_str;
-	int	i;
+	int		i;
 
 	if (!str)
 		return (__new_str(c));
@@ -27,11 +39,9 @@ char	*ft_insert(char *str, int c, int pos)
 		i++;
 	}
 	new_str[i] = c;
-	while (str[i])
-	{
+	i--;
+	while (str[++i])
 		new_str[i + 1] = str[i];
-		i++;
-	}
 	new_str[i + 1] = 0;
 	free(str);
 	return (new_str);

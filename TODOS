@@ -1,11 +1,7 @@
 TODOS:
 
-- controllare i memory leak in ogni angolo
+- controllare i memory leak in ogni angolo (a mio parere é leak free)
 
-- norminettare libft
-
-- trovare bug nella gestione di ' " \
-
-- migliorare il syntax error in safe_split (ma anche no)
+- trovare bug nella gestione di ' " \ (io non ne ho trovati)
 
 - migliorare assign (arg=3=4);

@@ -42,6 +42,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->clipboard = NULL;
 	minishell->prompt = NULL;
 	minishell->input = NULL;
+	minishell->semicols = NULL;
 	minishell->cursor = 0;
 	configure_termios(minishell);
 	minishell->command = malloc(sizeof(t_command));

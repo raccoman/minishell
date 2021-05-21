@@ -1,5 +1,5 @@
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
 # include <unistd.h>
 # include <stdio.h>
@@ -13,25 +13,23 @@
 # include <errno.h>
 
 # include "color.h"
-# include "../libraries/libft/libft.h"
+# include "libft.h"
 
-extern int errno;
-
-typedef struct	s_history
+typedef struct s_history
 {
 	char				*cmd_line;
 	char				*safe;
 	struct s_history	*prec;
 	struct s_history	*next;
-}						t_history;
+}	t_history;
 
-typedef	struct	s_simple_cmd
+typedef struct s_simple_cmd
 {
-	char	**arguments;
+	char				**arguments;
 	struct s_simple_cmd	*next;
-}			t_simple_cmd;
+}	t_simple_cmd;
 
-typedef struct	s_command
+typedef struct s_command
 {
 	char			*infile;
 	char			*outfile;
@@ -40,7 +38,7 @@ typedef struct	s_command
 	t_simple_cmd	*s_commands;
 }	t_command;
 
-typedef struct	s_minishell
+typedef struct s_minishell
 {
 	struct termios	our_cfg;
 	struct termios	sys_cfg;
@@ -49,15 +47,16 @@ typedef struct	s_minishell
 	t_list			*session_env;
 	t_list			*exported;
 	char			*input;
+	char			**semicols;
 	char			*clipboard;
 	char			*prompt;
 	int				cursor;
 	t_history		*history;
 	t_command		*command;
 	pid_t			pid;
-}				t_minishell;
+}	t_minishell;
 
-typedef enum	e_key
+typedef enum e_key
 {
 	KEY_UNKNOWN,
 	KEY_ALPHANUMERIC,
@@ -78,9 +77,9 @@ typedef enum	e_key
 	KEY_CANCEL,
 	KEY_HOME,
 	KEY_END
-}				t_key;
+}	t_key;
 
-typedef enum	e_builtin
+typedef enum e_builtin
 {
 	BUILTIN_ECHO,
 	BUILTIN_EXIT,
@@ -91,45 +90,32 @@ typedef enum	e_builtin
 	BUILTIN_UNSET,
 	BUILTIN_ASSIGN,
 	NONE
-}				t_builtin;
+}	t_builtin;
 
 t_minishell	*g_minishell;
 
 void	configure(t_minishell *minishell, char *env[]);
 void	terminate(t_minishell *minishell);
-void	get_input(t_minishell *minishell);
+void	prompt(t_minishell *minishell, const char *prefix);
 
-void	print_error(char *prefix, char *error_msg);
-int		is_assign(const char *str);
-int		is_path(char *str);
-short	check_option(char *cmd, char *first);
-int		check_quote(char *str);
-
+void	parse_input(t_minishell *minishell);
 void	get_input(t_minishell *minishell);
 t_key	read_wrapper(t_minishell *minishell, char *c);
-void    update_input(t_minishell *minishell, char c);
+void	update_input(t_minishell *minishell, char c);
+char	*get_next_token(char **input);
 
+int		expander(t_minishell *minishell, t_simple_cmd *curr);
 char	*expand_dquote(t_minishell *minishell, char *token, int *i);
 char	*expand_quote(char *token, int *i);
 char	*expand_var(t_minishell *minishell, char *token, int *i);
 
-int		check_file(t_minishell *minishell, char **input, char *error_msg);
-char	*get_next_token(char **input);
-
-void	prompt(t_minishell *minishell, const char *prefix);
-void	parse_input(t_minishell *minishell);
 int		builtins(char *name, t_simple_cmd *curr, t_minishell *minishell);
-void    executor(t_minishell *minishell, t_command *command);
+void	executor(t_minishell *minishell, t_command *command);
 void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell);
-void	execute_pipeline(t_minishell *minishell, t_command *command, int *tmp_stds);
-int		expander(t_minishell *minishell, t_simple_cmd *curr);
-void	set_statusenv(t_minishell *minishell, int code);
+void	execute_pipeline(t_minishell *minishell,
+			t_command *command, int *tmp_stds);
 
-t_key	get_key(char c);
-void	handle_key(t_minishell *minishell, t_key key);
-void	handle_enter(t_minishell *minishell);
-
-int	handle_eof(t_minishell *minishell, t_key key);
+int		handle_eof(t_minishell *minishell, t_key key);
 char	*update_buffer(t_minishell *minishell, char *buffer);
 void	reset_input(t_minishell *minishell);
 
@@ -143,16 +129,16 @@ void	clear_commands(t_command *command);
 
 t_list	*find_env(t_list *env, char *name);
 char	*env_name(const char *env);
-int		cmd_cmp(char *s1, char *s2);
 char	*get_env_value(t_minishell *minishell, char *name);
 char	**get_env_matrix(t_list *env);
+void	set_statusenv(t_minishell *minishell, int code);
 
 void	restore_stds(int *tmp_stds);
 void	redirect_outfile(char *outfile, int tmpout, int append);
 int		redirect_infile(char *infile, int tmpin, int here_doc, int single);
 
 void	handle_exit(t_minishell *minishell, t_simple_cmd *curr);
-void    handle_pwd(t_simple_cmd *curr);
+void	handle_pwd(t_simple_cmd *curr);
 void	handle_echo(t_minishell *minishell, t_simple_cmd *curr);
 void	handle_env(t_minishell *minishell, t_simple_cmd *curr);
 void	handle_assign(t_minishell *minishell, t_simple_cmd *curr);
@@ -162,16 +148,26 @@ void	handle_cd(t_minishell *minishell, t_simple_cmd *curr);
 void	single_export(t_minishell *minishell, char *export);
 void	handle_unset(t_minishell *minishell, t_simple_cmd *curr);
 
-char    **safe_split(char *input, char del);
+void	handle_sigquit(int signal);
+void	handle_sigint(int signal);
 
-void    handle_sigquit(int signal);
-void    handle_sigint(int signal);
-
+t_key	get_key(char c);
+void	handle_key(t_minishell *minishell, t_key key);
+void	handle_enter(t_minishell *minishell);
 void	left_right(t_minishell *sh, t_key key);
 void	eof_home_end(t_minishell *sh, t_key key);
 void	copy_paste(t_minishell *sh, t_key key);
 void	up_down(t_minishell *sh, t_key key);
+
 int		first_check(t_minishell *minishell, char *input);
 void	adjust_prompt(t_minishell *minishell);
+void	print_error(char *prefix, char *error_msg);
+int		is_assign(const char *str);
+int		is_path(char *str);
+short	check_option(char *cmd, char *first);
+int		check_quote(char *str);
+int		cmd_cmp(char *s1, char *s2);
+int		check_file(t_minishell *minishell, char **input, char *error_msg);
+char	**safe_split(char *input, char del);
 
 #endif

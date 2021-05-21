@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_append.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/21 15:09:51 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/21 15:09:59 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 char	*new_string(char c)
@@ -15,7 +27,7 @@ char	*new_string(char c)
 char	*ft_append(char *str, char c)
 {
 	char	*new_str;
-	int	i;
+	int		i;
 
 	if (!str)
 		return (new_string(c));

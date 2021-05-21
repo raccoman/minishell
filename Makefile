@@ -42,18 +42,18 @@ OBJS =			$(patsubst $(SOURCES_DIR)/%, $(OBJECTS_DIR)/%, $(SRCS:.c=.o))
 
 $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.c
 	@$(MKDIR) $(@D)
-	@$(CC) $(IFLAG) $(HEADERS_DIR) $(IFLAG) $(LIBRARIES_DIR) $(CFLAG) $(OFLAG) $@ $<
+	@$(CC) $(CFLAG) $(CFLAGS) $(IFLAG)$(HEADERS_DIR) $(OFLAG) $@ $<
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBRARIES) main.c $(OFLAG) $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(IFLAG)$(HEADERS_DIR) -L$(LIBFT_DIR) -lft main.c $(OFLAG) $(NAME)
 	@echo "Done!"
 
 $(LIBFT):
 	@$(MAKE) $(LIBFT_DIR)
 
-norminette:
+norme:
 	@$(NORM) $(shell find $(SOURCES_DIR) -name *.c)
 	@$(NORM) $(shell find $(HEADERS_DIR) -name *.h)
 
@@ -70,7 +70,7 @@ fclean: clean
 re: fclean all clean
 
 debug: $(LIBFT) $(SRCS)
-	@$(CC) -g main.c $(SRCS) $(IFLAG) $(HEADERS_DIR) -L$(LIBFT_DIR) -lft $(OFLAG) $(DEBUG)
+	@$(CC) -g main.c $(SRCS) $(IFLAG)$(HEADERS_DIR) -L$(LIBFT_DIR) -lft $(OFLAG) $(DEBUG)
 	@lldb debug
 
 run: re

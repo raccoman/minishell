@@ -3,7 +3,6 @@
 int	handle_infile(char **input, t_command *command)
 {
 	char	*path;
-	int		i;
 	int		fd;
 
 	if (!check_file(g_minishell, input, "expected infile"))
@@ -30,7 +29,6 @@ int	handle_infile(char **input, t_command *command)
 int	handle_outfile(char **input, t_command *command)
 {
 	char	*path;
-	int		i;
 	int		fd;
 
 	if (!check_file(g_minishell, input, "expected outfile"))

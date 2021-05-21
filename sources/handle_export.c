@@ -87,6 +87,7 @@ void	no_args(t_minishell *minishell)
 		i++;
 	sort_matrix(envs, i);
 	print_declare(envs);
+	ft_free2D((void **)envs);
 }
 
 void	handle_export(t_minishell *minishell, t_simple_cmd *curr)

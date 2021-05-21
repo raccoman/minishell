@@ -30,13 +30,13 @@ void	eof_home_end(t_minishell *sh, t_key key)
 {
 	int	i;
 
+	i = 0;
 	if (key == KEY_EOF && sh->input && *sh->input)
 		i = -1;
-	else if (key == KEY_HOME)
-		i = 0;
-	else if (key != KEY_EOF)
+	else if (key == KEY_END)
 		i = ft_strlen(sh->input);
-	if (sh->cursor == i || i == -1)
+	if ((key == KEY_EOF && i == -1)
+		|| (key != KEY_EOF && sh->cursor == i))
 	{
 		printf("\a");
 		return ;

@@ -103,7 +103,6 @@ void	handle_key(t_minishell *sh, t_key key)
 
 void	handle_enter(t_minishell *minishell)
 {
-	char		**single_input;
 	int			i;
 
 	printf(CC_RESET "\n");
@@ -112,17 +111,18 @@ void	handle_enter(t_minishell *minishell)
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
-		single_input = safe_split(minishell->input, ';');
+		minishell->semicols = safe_split(minishell->input, ';');
 		free(minishell->input);
 		i = 0;
-		while (single_input[i])
+		while (minishell->semicols[i])
 		{
-			minishell->input = single_input[i++];
+			minishell->input = ft_strdup(minishell->semicols[i++]);
 			parse_input(minishell);
 			executor(minishell, minishell->command);
 			free(minishell->input);
 		}
-		free(single_input);
+		ft_free2D((void **)minishell->semicols);
+		minishell->semicols = NULL;
 		minishell->input = NULL;
 	}
 	minishell->cursor = 0;

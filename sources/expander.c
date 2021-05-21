@@ -56,8 +56,6 @@ char	*expand_token(t_minishell *minishell, char *token)
 {
 	int		i;
 	char	*result;
-	char	*safe;
-	char	*join;
 
 	result = malloc(1);
 	*result = 0;

@@ -1,47 +1,65 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/13 11:39:31 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/01/13 11:39:34 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
-static int	ft_intlen(int n)
+int	abs(int n)
 {
-	int i;
-
-	i = 0;
 	if (n < 0)
-	{
 		n *= -1;
-		i++;
-	}
-	while (n >= 1)
+	return (n);
+}
+
+int	calc_digits(int n, short *negative)
+{
+	int	count;
+
+	*negative = 0;
+	if (n < 0)
+		*negative = 1;
+	if (n == 0)
+		return (1);
+	count = 0;
+	while (n != 0)
 	{
+		count++;
 		n /= 10;
-		i++;
 	}
-	return (i == 0 ? 1 : i);
+	return (count);
 }
 
 char	*ft_itoa(int n)
 {
-	char	*string;
-	int		lenght;
+	short	negative;
+	int		digit_count;
+	char	*converted;
 
-	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
-	lenght = ft_intlen(n);
-	string = (char *)malloc(sizeof(char) * (lenght + 1));
-	if (string)
+	digit_count = calc_digits(n, &negative) + 1;
+	if (negative)
+		digit_count++;
+	converted = malloc(digit_count);
+	converted[digit_count - 1] = 0;
+	if (!n)
 	{
-		string[0] = '\0';
-		string[lenght] = '\0';
-		if (n < 0)
-		{
-			string[0] = '-';
-			n *= -1;
-		}
-		while (--lenght > (string[0] == '-' ? 0 : -1))
-		{
-			string[lenght] = n % 10 + '0';
-			n /= 10;
-		}
-		return (string);
+		converted[digit_count - 2] = '0';
+		return (converted);
 	}
-	return (NULL);
+	digit_count -= 2;
+	while (n)
+	{
+		converted[digit_count--] = abs(n % 10) + 48;
+		n /= 10;
+	}
+	if (negative)
+		converted[digit_count] = '-';
+	return (converted);
 }

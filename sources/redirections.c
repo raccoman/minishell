@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	handle_here_doc(char *delim, int single, int *fdpipe, char *buffer)
+int	handle_here_doc(char *delim, int *fdpipe, char *buffer)
 {
 	char	c;
 	t_key	key;
@@ -37,7 +37,7 @@ int	redirect_infile(char *infile, int tmpin, int here_doc, int single)
 		pipe(fds);
 		g_minishell->pid = fork();
 		if (!g_minishell->pid)
-			handle_here_doc(infile, single, fds, NULL);
+			handle_here_doc(infile, fds, NULL);
 		waitpid(g_minishell->pid, NULL, 0);
 		g_minishell->pid = -1;
 		close(fds[1]);

@@ -20,60 +20,63 @@ void	jump_quote(char *input, int *i, char type)
 	(*i)++;
 }
 
-char	**split_token(int i, int start, char *input, char **splitted)
+char	**expected_cmd(char **splitted, char del)
+{
+	char	*error_msg;
+
+	error_msg = ft_strdup("expected command before '");
+	error_msg = ft_append(error_msg, del);
+	error_msg = ft_append(error_msg, '\'');
+	print_error("syntax error", error_msg);
+	free(error_msg);
+	ft_free2D((void **)splitted);
+	splitted = NULL;
+	return (ft_append_element(splitted, 0));
+}
+
+char	**split_token(int *inds, char *input, char **splitted, char del)
 {
 	char	*token;
 
-	if (!input[i] && (i == start || ft_onlythischar(&input[start], ' ')))
+	if (!input[*inds] && (*inds == inds[1]
+			|| ft_onlythischar(&input[inds[1]], ' ')) && del == ';')
 	{
 		if (!splitted)
 			splitted = ft_append_element(splitted, 0);
 		return (splitted);
 	}
-	if (start == i)
-	{
-		print_error("syntax error", "expected command");
-		ft_free2D((void **)splitted);
-		splitted = NULL;
-		return (ft_append_element(splitted, 0));
-	}
-	token = malloc((i - start + 1));
-	ft_strlcpy(token, input + start, i - start + 1);
+	if (inds[1] == *inds)
+		return (expected_cmd(splitted, del));
+	token = malloc((*inds - inds[1] + 1));
+	ft_strlcpy(token, input + inds[1], *inds - inds[1] + 1);
 	if (ft_onlythischar(token, ' '))
-	{
-		print_error("syntax error", "expected command");
-		ft_free2D((void **)splitted);
-		splitted = NULL;
-		return (ft_append_element(splitted, 0));
-	}
+		return (expected_cmd(splitted, del));
 	return (ft_append_element(splitted, token));
 }
 
 char	**safe_split(char *input, char del)
 {
 	char	**splitted;
-	int		i;
-	int		start;
-	char	*token;
+	int		inds[2];
 
 	splitted = NULL;
-	i = 0;
-	start = 0;
+	*inds = 0;
+	inds[1] = 0;
 	while (1)
 	{
-		if (input[i] == '\\')
-			i += 2;
-		if (input[i] == '\'' || input[i] == '\"')
-			jump_quote(input, &i, input[i]);
-		if (input[i] == del || !input[i])
+		if (input[*inds] == '\\')
+			*inds += 2;
+		if (input[*inds] == '\'' || input[*inds] == '\"')
+			jump_quote(input, inds, input[*inds]);
+		if (input[*inds] == del || !input[*inds])
 		{
-			splitted = split_token(i, start, input, splitted);
-			if (!(*splitted) || !input[i])
+			splitted = split_token(inds, input, splitted, del);
+			if (!(*splitted) || !input[*inds])
 				break ;
-			start = ++i;
+			inds[1] = ++(*inds);
 		}
 		else
-			i++;
+			(*inds)++;
 	}
 	return (splitted);
 }

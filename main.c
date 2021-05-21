@@ -1,4 +1,4 @@
-#include "headers/minishell.h"
+#include "minishell.h"
 
 void	prompt(t_minishell *minishell, const char *prefix)
 {
