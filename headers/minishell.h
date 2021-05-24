@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/24 13:25:23 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/24 13:25:27 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -104,7 +116,7 @@ t_key	read_wrapper(t_minishell *minishell, char *c);
 void	update_input(t_minishell *minishell, char c);
 char	*get_next_token(char **input);
 
-int		expander(t_minishell *minishell, t_simple_cmd *curr);
+void	expander(t_minishell *minishell, t_simple_cmd *curr);
 char	*expand_dquote(t_minishell *minishell, char *token, int *i);
 char	*expand_quote(char *token, int *i);
 char	*expand_var(t_minishell *minishell, char *token, int *i);

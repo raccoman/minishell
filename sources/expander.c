@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/24 13:13:16 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/24 13:13:17 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	delete_arguments(t_simple_cmd *curr)
@@ -72,7 +84,7 @@ char	*expand_token(t_minishell *minishell, char *token)
 	return (result);
 }
 
-int	expander(t_minishell *minishell, t_simple_cmd *curr)
+void	expander(t_minishell *minishell, t_simple_cmd *curr)
 {
 	int	i;
 
@@ -84,5 +96,4 @@ int	expander(t_minishell *minishell, t_simple_cmd *curr)
 		delete_arguments(curr);
 		curr = curr->next;
 	}
-	return (1);
 }

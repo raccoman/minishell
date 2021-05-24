@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/24 13:12:54 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/24 13:12:56 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	execute_path(t_simple_cmd *cmd, char **env_matrix)
@@ -30,7 +42,7 @@ void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell)
 	int		i;
 
 	env_matrix = get_env_matrix(minishell->main_env);
-	if (is_path(*cmd->arguments))
+	if (is_path(*cmd->arguments) || !find_env(minishell->main_env, "PATH"))
 		return (execute_path(cmd, env_matrix));
 	paths = ft_split(get_env_value(minishell, "PATH"), ':');
 	i = -1;

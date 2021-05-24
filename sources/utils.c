@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/24 13:17:44 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/24 13:17:46 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	print_error(char *prefix, char *error_msg)
@@ -49,7 +61,7 @@ short	check_option(char *cmd, char *first)
 {
 	char	*error_prefix;
 
-	if (first && *first == '-')
+	if (first && *first == '-' && first[1])
 	{
 		error_prefix = ft_strjoin(cmd, first);
 		print_error(error_prefix, "Invalid option");

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/24 13:13:01 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/05/24 13:13:03 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_builtin	is_builtin(char *name)
@@ -94,11 +106,7 @@ void	executor(t_minishell *minishell, t_command *command)
 
 	if (!command->s_commands)
 		return (clear_commands(command));
-	if (!expander(minishell, command->s_commands))
-	{
-		clear_commands(command);
-		return ;
-	}
+	expander(minishell, command->s_commands);
 	tmp_stds[0] = dup(0);
 	tmp_stds[1] = dup(1);
 	if (!command->s_commands->next)
