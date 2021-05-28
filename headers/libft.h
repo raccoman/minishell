@@ -33,6 +33,7 @@ void	ft_lstadd_front(t_list **head, t_list *new);
 t_list	*ft_lstlast(t_list *head);
 void	ft_lstclear(t_list **element);
 int		ft_lstsize(t_list *head);
+int		ft_count(char *string, int c);
 int		ft_is_num(const char *str);
 int		ft_atoi(const char *num);
 int		ft_strlen(const char *str);
@@ -51,7 +52,7 @@ char	*ft_append(char *str, char c);
 char	**ft_append_element(char **matrix, char *element);
 char	*ft_insert(char *str, int c, int pos);
 char	*ft_remove_at(char *str, int pos);
-char	*ft_strmaxjoin(char **strings, char *c);
+char	*ft_strjoin2D(char **strings, char *c, int free2D);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 short	ft_onlythischar(char *str, char c);
 

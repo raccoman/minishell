@@ -123,6 +123,7 @@ void	handle_enter(t_minishell *minishell)
 	if (minishell->input)
 	{
 		add_history(minishell, minishell->input);
+		minishell->input = parse_wildcards(minishell->input);
 		minishell->semicols = safe_split(minishell->input, ';');
 		free(minishell->input);
 		i = 0;

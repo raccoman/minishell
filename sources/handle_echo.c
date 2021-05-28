@@ -35,7 +35,7 @@ void	handle_echo(t_minishell *minishell, t_simple_cmd *curr)
 	{
 		if (minishell->prompt)
 			free(minishell->prompt);
-		minishell->prompt = ft_strmaxjoin(&(args[i]), " ");
+		minishell->prompt = ft_strjoin2D(&(args[i]), " ", 0);
 		return ;
 	}
 	while (args[i] && args[i + 1])

@@ -9,23 +9,32 @@ include_directories(libraries/libft)
 set(LINK_LIBRARIES ${CMAKE_SOURCE_DIR}/libraries)
 set(SRCS
 		sources/command.c
+		sources/configure.c
 		sources/env_utils.c
+		sources/execute.c
 		sources/executor.c
-		sources/history.c
-		sources/key.c
-		sources/minishell.c
-		sources/parser.c
+		sources/expand_utils.c
 		sources/expander.c
 		sources/handle_assign.c
+		sources/handle_cd.c
 		sources/handle_echo.c
 		sources/handle_env.c
 		sources/handle_exit.c
-		sources/handle_pwd.c
-		sources/handle_cd.c
 		sources/handle_export.c
+		sources/handle_keys.c
+		sources/handle_pwd.c
 		sources/handle_unset.c
+		sources/here_doc_utils.c
+		sources/history.c
+		sources/input.c
+		sources/key.c
+		sources/more_handle_keys.c
+		sources/parse_utils.c
+		sources/parser.c
 		sources/redirections.c
-		sources/utils.c sources/quote.c)
+		sources/safe_split.c
+		sources/signals.c
+		sources/utils.c sources/wildcards.c)
 
 add_executable(${PROJECT_NAME} main.c ${SRCS})
 

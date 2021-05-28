@@ -23,6 +23,7 @@
 # include <signal.h>
 # include <unistd.h>
 # include <errno.h>
+# include <dirent.h>
 
 # include "color.h"
 # include "libft.h"
@@ -181,5 +182,7 @@ int		check_quote(char *str);
 int		cmd_cmp(char *s1, char *s2);
 int		check_file(t_minishell *minishell, char **input, char *error_msg);
 char	**safe_split(char *input, char del);
+
+char	*parse_wildcards(char *input);
 
 #endif

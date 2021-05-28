@@ -36,7 +36,9 @@ void	ft_lstrmv_if(t_list **begin_list,
 			free(curr);
 		}
 		else
+		{
 			prec = curr;
+		}
 		curr = tmp;
 	}
 }

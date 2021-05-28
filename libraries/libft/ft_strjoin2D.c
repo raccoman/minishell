@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-char	*ft_strmaxjoin(char **strings, char *c)
+char	*ft_strjoin2D(char **strings, char *c, int free2D)
 {
 	int		i;
 	char	*safe;
@@ -21,7 +21,7 @@ char	*ft_strmaxjoin(char **strings, char *c)
 	i = -1;
 	result = malloc(1);
 	*result = 0;
-	while (strings[++i])
+	while (strings && strings[++i])
 	{
 		safe = result;
 		result = ft_strjoin(result, strings[i]);
@@ -33,5 +33,7 @@ char	*ft_strmaxjoin(char **strings, char *c)
 			free(safe);
 		}
 	}
+	if (free2D)
+		ft_free2D((void **)strings);
 	return (result);
 }

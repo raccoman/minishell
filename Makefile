@@ -42,6 +42,7 @@ FILES =	command.c \
 		safe_split.c \
 		signals.c \
 		utils.c \
+		wildcards.c
 
 #Norm
 NORM =			norminette
