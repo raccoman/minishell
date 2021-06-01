@@ -1,49 +1,50 @@
 #include "minishell.h"
+#include "wildcards_utils.c"
 
 char	*get_root(char *wildcard)
 {
-	int		offset;
-	char	*root;
-	char	*prefix;
+	int pos;
 
-	prefix = ft_split(wildcard, '*')[0];
-	if (!prefix || prefix[0] == '*')
-		return (ft_strdup("."));
-	offset = ft_strlen(prefix);
-	while (prefix[--offset])
-		if (prefix[offset] == '/')
-			break;
-	root = malloc(sizeof(char) * (offset));
-	if (root)
+	pos = ft_find(wildcard, '*');
+	if (pos == 0)
+		return (strdup("."));
+	while (pos > 0)
 	{
-		ft_memcpy(root, prefix, offset);
-		root[offset] = 0;
+		if (wildcard[pos] == '/')
+			return (strndup(wildcard, pos + 1));
+		pos--;
 	}
-	return (root);
+	if (wildcard[pos] == '/')
+		return (strdup("/"));
+	return (strdup("."));
 }
 
 void	list_files(t_list **list, char *root, int deep)
 {
 	DIR				*directory;
 	struct dirent	*element;
-	char			*base_dir;
 
 	if (deep == 0)
+		return ;
+	if (!adjust_root(&root))
 		return ;
 	directory = opendir(root);
 	if (!directory)
 		return ;
-	base_dir = ft_strjoin(root, "/");
 	element = readdir(directory);
 	while (element != NULL)
 	{
 		if (element->d_type == DT_REG && element->d_name[0] != '.')
-			ft_lstadd_back(list, ft_lstnew(ft_strjoin(base_dir, element->d_name)));
+		{
+			if (root[0] == '.' && root[1] == '/')
+				ft_lstadd_back(list, ft_lstnew(ft_strdup(element->d_name)));
+			else
+				ft_lstadd_back(list, ft_lstnew(ft_strjoin(root, element->d_name)));
+		}
 		else if (element->d_type == DT_DIR && element->d_name[0] != '.')
-			list_files(list, ft_strjoin(base_dir, element->d_name), deep - 1);
+			list_files(list, ft_strjoin(root, element->d_name), deep - 1);
 		element = readdir(directory);
 	}
-	free(base_dir);
 	closedir(directory);
 }
 
@@ -74,16 +75,18 @@ int	filter(const char *file, const char *wildcard)
 
 char	*expand_wc(char *wildcard)
 {
-	t_list			*list;
-	int				deep;
-	char			*root;
+	t_list	*list;
+	int		deep;
+	char	*root;
+	char	**matrix;
 
 	root = get_root(wildcard);
 	deep = ft_count(wildcard + ft_strlen(root), '/') + 1;
+	list = NULL;
 	list_files(&list, root, deep);
-	ft_lstrmv_if(&list, ft_strjoin(wildcard, "/*"), filter, &free);
-	//TODO: PERCHE CAZZO CRASHA??!?!?!?
-	return (ft_strdup("wc")); //TODO: join list by ' '
+	ft_lstrmv_if(&list, wildcard, &filter, &free);
+	matrix = lst_to_matrix(list);
+	return (ft_strjoin2D(matrix, " ", 1));
 }
 
 char	*parse_wildcards(char *input)

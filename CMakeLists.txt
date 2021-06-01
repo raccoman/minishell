@@ -34,7 +34,7 @@ set(SRCS
 		sources/redirections.c
 		sources/safe_split.c
 		sources/signals.c
-		sources/utils.c sources/wildcards.c)
+		sources/utils.c sources/wildcards.c sources/wildcards_utils.c)
 
 add_executable(${PROJECT_NAME} main.c ${SRCS})
 

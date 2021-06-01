@@ -143,7 +143,7 @@ void	clear_commands(t_command *command);
 t_list	*find_env(t_list *env, char *name);
 char	*env_name(const char *env);
 char	*get_env_value(t_minishell *minishell, char *name);
-char	**get_env_matrix(t_list *env);
+char	**lst_to_matrix(t_list *env);
 void	set_statusenv(t_minishell *minishell, int code);
 
 void	restore_stds(int *tmp_stds);

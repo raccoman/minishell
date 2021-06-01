@@ -55,5 +55,6 @@ char	*ft_remove_at(char *str, int pos);
 char	*ft_strjoin2D(char **strings, char *c, int free);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 short	ft_onlythischar(char *str, char c);
+int		ft_find(char *str, int c);
 
 #endif

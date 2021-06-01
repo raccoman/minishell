@@ -27,7 +27,8 @@ FILES	=	ft_append.c \
 			ft_strlcpy.c \
 			ft_strlen.c \
 			ft_strjoin2D.c \
-			ft_count.c
+			ft_count.c \
+			ft_find.c
 
 SRCS =	$(foreach FILE, $(FILES), $(shell find . -name $(FILE)))
 

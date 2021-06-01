@@ -87,7 +87,7 @@ void	no_args(t_minishell *minishell)
 	int		i;
 	t_list	*tmp;
 
-	envs = get_env_matrix(minishell->main_env);
+	envs = lst_to_matrix(minishell->main_env);
 	tmp = minishell->exported;
 	while (tmp)
 	{

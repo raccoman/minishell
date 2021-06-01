@@ -41,7 +41,7 @@ void	execute_non_builtin(t_simple_cmd *cmd, t_minishell *minishell)
 	char	*safe;
 	int		i;
 
-	env_matrix = get_env_matrix(minishell->main_env);
+	env_matrix = lst_to_matrix(minishell->main_env);
 	if (is_path(*cmd->arguments) || !find_env(minishell->main_env, "PATH"))
 		return (execute_path(cmd, env_matrix));
 	paths = ft_split(get_env_value(minishell, "PATH"), ':');

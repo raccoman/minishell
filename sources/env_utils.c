@@ -68,7 +68,7 @@ char	*get_env_value(t_minishell *minishell, char *name)
 	return (((char *)env->data) + (i + 1));
 }
 
-char	**get_env_matrix(t_list *env)
+char	**lst_to_matrix(t_list *env)
 {
 	char	**result;
 	int		i;
