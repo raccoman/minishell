@@ -1,20 +1,23 @@
 #include "minishell.h"
 #include "wildcards_utils.c"
 
-char	*get_root(char *wildcard)
+char	*get_root(char **wildcard)
 {
-	int pos;
+	int	pos;
 
-	pos = ft_find(wildcard, '*');
+	pos = ft_find(*wildcard, '~');
+	if (pos == 0)
+		*wildcard = ft_strjoin(getenv("HOME"), *wildcard + 1);
+	pos = ft_find(*wildcard, '*');
 	if (pos == 0)
 		return (strdup("."));
 	while (pos > 0)
 	{
-		if (wildcard[pos] == '/')
-			return (strndup(wildcard, pos + 1));
+		if ((*wildcard)[pos] == '/')
+			return (strndup(*wildcard, pos + 1));
 		pos--;
 	}
-	if (wildcard[pos] == '/')
+	if ((*wildcard)[pos] == '/')
 		return (strdup("/"));
 	return (strdup("."));
 }
@@ -80,7 +83,7 @@ char	*expand_wc(char *wildcard)
 	char	*root;
 	char	**matrix;
 
-	root = get_root(wildcard);
+	root = get_root(&wildcard);
 	deep = ft_count(wildcard + ft_strlen(root), '/') + 1;
 	list = NULL;
 	list_files(&list, root, deep);
