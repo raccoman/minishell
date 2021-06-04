@@ -1,54 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wildcards.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mgiordanraccoman <marvin@42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/06/04 17:20:36 by mgiordan          #+#    #+#             */
+/*   Updated: 2021/06/04 17:21:01 by mgiordan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-#include "wildcards_utils.c"
 
 char	*get_root(char **wildcard)
 {
-	int	pos;
+	int		pos;
+	char	*safe;
 
 	pos = ft_find(*wildcard, '~');
 	if (pos == 0)
+	{
+		safe = *wildcard;
 		*wildcard = ft_strjoin(getenv("HOME"), *wildcard + 1);
+		free(safe);
+	}
 	pos = ft_find(*wildcard, '*');
 	if (pos == 0)
-		return (strdup("."));
+		return (ft_strdup("."));
 	while (pos > 0)
 	{
 		if ((*wildcard)[pos] == '/')
-			return (strndup(*wildcard, pos + 1));
+			return (ft_strndup(*wildcard, pos + 1));
 		pos--;
 	}
 	if ((*wildcard)[pos] == '/')
-		return (strdup("/"));
-	return (strdup("."));
+		return (ft_strdup("/"));
+	return (ft_strdup("."));
 }
 
 void	list_files(t_list **list, char *root, int deep)
 {
 	DIR				*directory;
-	struct dirent	*element;
+	struct dirent	*el;
 
-	if (deep == 0)
-		return ;
-	if (!adjust_root(&root))
-		return ;
-	directory = opendir(root);
-	if (!directory)
-		return ;
-	element = readdir(directory);
-	while (element != NULL)
+	if (!deep || !adjust_root(&root))
 	{
-		if (element->d_type == DT_REG && element->d_name[0] != '.')
+		free(root);
+		return ;
+	}
+	directory = opendir(root);
+	el = readdir(directory);
+	while (el != NULL)
+	{
+		if (el->d_type == DT_REG && el->d_name[0] != '.')
 		{
 			if (root[0] == '.' && root[1] == '/')
-				ft_lstadd_back(list, ft_lstnew(ft_strdup(element->d_name)));
+				ft_lstadd_back(list, ft_lstnew(ft_strdup(el->d_name)));
 			else
-				ft_lstadd_back(list, ft_lstnew(ft_strjoin(root, element->d_name)));
+				ft_lstadd_back(list, ft_lstnew(ft_strjoin(root, el->d_name)));
 		}
-		else if (element->d_type == DT_DIR && element->d_name[0] != '.')
-			list_files(list, ft_strjoin(root, element->d_name), deep - 1);
-		element = readdir(directory);
+		else if (el->d_type == DT_DIR && el->d_name[0] != '.')
+			list_files(list, ft_strjoin(root, el->d_name), deep - 1);
+		el = readdir(directory);
 	}
 	closedir(directory);
+	free(root);
 }
 
 int	filter(const char *file, const char *wildcard)
@@ -88,17 +104,22 @@ char	*expand_wc(char *wildcard)
 	list = NULL;
 	list_files(&list, root, deep);
 	ft_lstrmv_if(&list, wildcard, &filter, &free);
+	if (!list)
+		list = ft_lstnew(ft_strdup(wildcard));
 	matrix = lst_to_matrix(list);
+	ft_lstclear(&list);
+	free(wildcard);
 	return (ft_strjoin2D(matrix, " ", 1));
 }
 
 char	*parse_wildcards(char *input)
 {
-	int	i;
+	int		i;
 	char	**split;
 
 	i = 0;
 	split = ft_split(input, ' ');
+	free(input);
 	while (split && split[i] != NULL)
 	{
 		if (ft_contains(split[i], '*'))

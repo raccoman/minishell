@@ -24,9 +24,13 @@
 # include <unistd.h>
 # include <errno.h>
 # include <dirent.h>
+# include <sys/ioctl.h>
+# include <math.h>
 
 # include "color.h"
 # include "libft.h"
+
+# define PROMPT_LEN 13
 
 typedef struct s_history
 {
@@ -64,6 +68,7 @@ typedef struct s_minishell
 	char			*clipboard;
 	char			*prompt;
 	int				cursor;
+	float			last_len;
 	t_history		*history;
 	t_command		*command;
 	pid_t			pid;
@@ -171,6 +176,7 @@ void	left_right(t_minishell *sh, t_key key);
 void	eof_home_end(t_minishell *sh, t_key key);
 void	copy_paste(t_minishell *sh, t_key key);
 void	up_down(t_minishell *sh, t_key key);
+void	execute_semicols(t_minishell *minishell);
 
 int		first_check(t_minishell *minishell, char *input);
 void	adjust_prompt(t_minishell *minishell);
@@ -184,5 +190,6 @@ int		check_file(t_minishell *minishell, char **input, char *error_msg);
 char	**safe_split(char *input, char del);
 
 char	*parse_wildcards(char *input);
+int		adjust_root(char **root);
 
 #endif

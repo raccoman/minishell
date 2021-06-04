@@ -36,6 +36,8 @@ int	cmd_cmp(char *s1, char *s2)
 	int	len;
 
 	len = ft_strlen(s2);
+	if (ft_strlen(s1) <= len || s1[len] != '=')
+		return (-1);
 	return (ft_strncmp(s1, s2, len));
 }
 

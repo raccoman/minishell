@@ -3,5 +3,3 @@ TODOS:
 - controllare i memory leak in ogni angolo (a mio parere é leak free)
 
 - trovare bug nella gestione di ' " \ (io non ne ho trovati)
-
-- aggiungere wildcards (se proprio ci tieni(

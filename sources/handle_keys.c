@@ -20,8 +20,14 @@ void	shift_cursor_left(t_minishell *sh)
 
 void	shift_cursor_right(t_minishell *sh)
 {
+	struct winsize	size;
+
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+	if (!((sh->cursor + PROMPT_LEN) % size.ws_col))
+		printf("\033[1B\r");
+	else
+		printf("\033[1C");
 	sh->cursor++;
-	printf("\033[1C");
 }
 
 int	check_cursor(t_minishell *sh, t_key key, int *i)

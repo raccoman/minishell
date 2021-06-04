@@ -20,7 +20,7 @@ char	*expand_var(t_minishell *minishell, char *token, int *i)
 	(*i)++;
 	var_name = NULL;
 	var_name = ft_append(var_name, 0);
-	while (token[*i] && !ft_contains(" \'\"\\", token[*i]))
+	while (token[*i] && !ft_contains(" \'\"\\/", token[*i]))
 		var_name = ft_append(var_name, token[(*i)++]);
 	var_value = get_env_value(minishell, var_name);
 	free(var_name);

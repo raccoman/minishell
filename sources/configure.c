@@ -21,6 +21,24 @@ void	configure_termios(t_minishell *minishell)
 	minishell->our_cfg.c_cc[VTIME] = 0;
 }
 
+void	configure_shlvl_term(t_minishell *minishell)
+{
+	char	*tmp;
+
+	tmp = get_env_value(minishell, "SHLVL");
+	if (!tmp)
+		single_export(minishell, "SHLVL=1");
+	else
+	{
+		tmp = ft_itoa(ft_atoi(tmp) + 1);
+		single_assign(minishell, ft_strjoin("SHLVL=", tmp));
+		free(tmp);
+	}
+	tmp = get_env_value(minishell, "TERM");
+	if (!tmp)
+		single_assign(minishell, ft_strdup("TERM=dumb"));
+}
+
 void	configure_env(t_minishell *minishell, char	**env)
 {
 	minishell->main_env = NULL;
@@ -30,6 +48,7 @@ void	configure_env(t_minishell *minishell, char	**env)
 		env++;
 	}
 	minishell->session_env = NULL;
+	configure_shlvl_term(minishell);
 	single_assign(minishell, ft_strdup("?=0"));
 	minishell->exported = NULL;
 }
@@ -56,6 +75,7 @@ void	configure(t_minishell *minishell, char **env)
 	minishell->input = NULL;
 	minishell->semicols = NULL;
 	minishell->cursor = 0;
+	minishell->last_len = PROMPT_LEN;
 	configure_termios(minishell);
 	minishell->command = malloc(sizeof(t_command));
 	minishell->command->infile = NULL;

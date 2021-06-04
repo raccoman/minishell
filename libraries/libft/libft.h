@@ -38,6 +38,7 @@ int		ft_is_num(const char *str);
 int		ft_atoi(const char *num);
 int		ft_strlen(const char *str);
 char	*ft_strdup(char *str);
+char	*ft_strndup(char *str, int size);
 int		ft_strcmp(char *str1, char *str2);
 char	**ft_split(char const *str, char del);
 int		ft_strlcpy(char *dest, const char *src, int size);

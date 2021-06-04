@@ -78,9 +78,9 @@ char	**safe_split(char *input, char del)
 	{
 		if (input[*inds] == '\\')
 			*inds += 2;
-		if (input[*inds] == '\'' || input[*inds] == '\"')
+		else if (input[*inds] == '\'' || input[*inds] == '\"')
 			jump_quote(input, inds, input[*inds]);
-		if (input[*inds] == del || !input[*inds])
+		else if (input[*inds] == del || !input[*inds])
 		{
 			splitted = split_token(inds, input, splitted, del);
 			if (!(*splitted) || !input[*inds])

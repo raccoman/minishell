@@ -12,20 +12,44 @@
 
 #include "minishell.h"
 
+void	clear_lines(t_minishell *minishell, int reset)
+{
+	struct winsize	size;
+	float			to_remove;
+	int				tmp;
+
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+	tmp = minishell->cursor;
+	if (tmp != ft_strlen(minishell->input))
+	{
+		handle_key(minishell, KEY_END);
+		minishell->last_len++;
+	}
+	to_remove = minishell->last_len / (float)size.ws_col;
+	while (to_remove > 0)
+	{
+		printf("%c[2K", 27);
+		if (reset)
+			printf(CC_RESET "\r");
+		if (to_remove > 1)
+			printf("\033[1A");
+		to_remove--;
+	}
+	minishell->cursor = tmp;
+}
+
 void	prompt(t_minishell *minishell, const char *prefix)
 {
 	int	length;
 
-	length = ft_strlen(minishell->input);
 	if (minishell->pid != -1)
 	{
-		printf("%c[2K", 27);
-		printf(CC_RESET "\r");
+		clear_lines(minishell, 1);
 		printf(CC_CYN "> " CC_MAG "%s", minishell->input);
 	}
 	else
 	{
-		printf("%c[2K", 27);
+		clear_lines(minishell, 0);
 		printf(CC_RESET "%s", prefix);
 		if (minishell->prompt)
 			printf("%s", minishell->prompt);
@@ -34,6 +58,8 @@ void	prompt(t_minishell *minishell, const char *prefix)
 		else
 			printf(CC_CYN "maxishell $> " CC_MAG);
 	}
+	length = ft_strlen(minishell->input);
+	minishell->last_len = length + PROMPT_LEN;
 	while (minishell->cursor < length--)
 		printf("\033[1D");
 }
