@@ -115,6 +115,9 @@ void	handle_key(t_minishell *sh, t_key key)
 
 void	handle_enter(t_minishell *minishell)
 {
+	if (minishell->input
+		&& minishell->cursor != ft_strlen(g_minishell->input))
+		handle_key(g_minishell, KEY_END);
 	printf(CC_RESET "\n");
 	if (!first_check(minishell, minishell->input))
 		return ;
