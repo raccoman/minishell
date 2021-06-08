@@ -61,6 +61,7 @@ int	first_check(t_minishell *minishell, char *input)
 void	up_down(t_minishell *sh, t_key key)
 {
 	t_history	*tmp;
+	int			curs_tmp;
 
 	if (key == KEY_UP || key == KEY_SHIFT_UP)
 		tmp = sh->history->prec;
@@ -71,6 +72,10 @@ void	up_down(t_minishell *sh, t_key key)
 		printf("\a");
 		return ;
 	}
+	curs_tmp = sh->cursor;
+	if (curs_tmp != ft_strlen(sh->input))
+		handle_key(sh, KEY_END);
+	sh->cursor = curs_tmp;
 	sh->history = tmp;
 	if (sh->input)
 		free(sh->input);

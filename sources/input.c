@@ -26,11 +26,25 @@ t_key	read_wrapper(t_minishell *minishell, char *c)
 
 void	update_input(t_minishell *minishell, char c)
 {
+	int	tmp;
+	int	length;
+
 	minishell->input = ft_insert(minishell->input, \
 		c, minishell->cursor);
 	update_history(minishell->history, minishell->input);
 	minishell->cursor++;
+	tmp = minishell->cursor;
+	if (tmp != ft_strlen(minishell->input))
+	{
+		handle_key(minishell, KEY_END);
+		minishell->last_len++;
+	}
 	prompt(minishell, "\r");
+	minishell->cursor = tmp;
+	length = ft_strlen(minishell->input);
+	while (minishell->cursor < length--)
+		printf("\033[1D");
+	ft_fflush(stdout);
 }
 
 void	get_input(t_minishell *minishell)

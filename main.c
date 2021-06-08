@@ -16,15 +16,8 @@ void	clear_lines(t_minishell *minishell, int reset)
 {
 	struct winsize	size;
 	float			to_remove;
-	int				tmp;
 
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-	tmp = minishell->cursor;
-	if (tmp != ft_strlen(minishell->input))
-	{
-		handle_key(minishell, KEY_END);
-		minishell->last_len++;
-	}
 	to_remove = minishell->last_len / (float)size.ws_col;
 	while (to_remove > 0)
 	{
@@ -35,7 +28,6 @@ void	clear_lines(t_minishell *minishell, int reset)
 			printf("\033[1A");
 		to_remove--;
 	}
-	minishell->cursor = tmp;
 }
 
 void	prompt(t_minishell *minishell, const char *prefix)
@@ -59,7 +51,7 @@ void	prompt(t_minishell *minishell, const char *prefix)
 			printf(CC_CYN "maxishell $> " CC_MAG);
 	}
 	length = ft_strlen(minishell->input);
-	minishell->last_len = length + PROMPT_LEN;
+	minishell->last_len = length + PROMPT_LEN + ft_strlen(minishell->prompt);
 	while (minishell->cursor < length--)
 		printf("\033[1D");
 }
