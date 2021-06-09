@@ -43,7 +43,8 @@ FILES =	command.c \
 		signals.c \
 		utils.c \
 		wildcards.c \
-		wildcards_utils.c
+		wildcards_utils.c \
+		priorities.c
 
 #Norm
 NORM =			norminette

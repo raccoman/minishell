@@ -1,0 +1,26 @@
+#include "libft.h"
+
+void    ft_replace(char **string, char *match, char *replacement)
+{
+    char    *safe;
+    char    *new;
+    int     i;
+
+    i = 0;
+    new = NULL;
+    ft_append(new, 0);
+    while ((*string)[i])
+    {
+        if (!ft_strncmp((*string) + i, match, ft_strlen(match)))
+        {
+            safe = new;
+            new = ft_strjoin(new, replacement);
+            free(safe);
+            i += ft_strlen(match);
+        }
+        else
+            new = ft_append(new, (*string)[i++]);
+    }
+    free(*string);
+    *string = new;
+}

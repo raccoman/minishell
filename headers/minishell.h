@@ -64,6 +64,7 @@ typedef struct s_minishell
 	t_list			*session_env;
 	t_list			*exported;
 	char			*input;
+	char			*o_input;
 	char			**semicols;
 	char			*clipboard;
 	char			*prompt;
@@ -191,5 +192,7 @@ char	**safe_split(char *input, char del);
 
 char	*parse_wildcards(char *input);
 int		adjust_root(char **root);
+
+char    *parse_priorities(char *input);
 
 #endif

@@ -58,4 +58,7 @@ void	*ft_memcpy(void *dst, const void *src, size_t n);
 short	ft_onlythischar(char *str, char c);
 int		ft_find(char *str, int c);
 
+int		ft_count_str(char *string, char *in);
+void	ft_replace(char **string, char *match, char *replacement);
+
 #endif

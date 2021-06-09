@@ -27,3 +27,28 @@ int	ft_count(char *string, int c)
 	}
 	return (count);
 }
+
+int	ft_count_str(char *string, char *in)
+{
+	int	i;
+	int k;
+	int j;
+	int	count;
+
+	if (!string || !in)
+		return (0);
+	i = 0;
+	count = 0;
+	while (string[i])
+	{
+	        j = i;
+		    k = 0;
+		    while (string[i] && string[i] == in[k++])
+				i++;
+		    if (!in[k])
+			    count++;
+		    if (j == i)
+		        i++;
+	}
+	return (count);
+}

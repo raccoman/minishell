@@ -24,3 +24,5 @@ int	ft_find(char *str, int c)
 	}
 	return (-1);
 }
+
+

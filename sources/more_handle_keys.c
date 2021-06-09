@@ -115,17 +115,3 @@ void	copy_paste(t_minishell *sh, t_key key)
 	if (key == KEY_CTRL_U)
 		sh->clipboard = ft_strdup(sh->input + sh->cursor);
 }
-
-void	execute_semicols(t_minishell *minishell)
-{
-	int	i;
-
-	i = 0;
-	while (minishell->semicols[i])
-	{
-		minishell->input = ft_strdup(minishell->semicols[i++]);
-		parse_input(minishell);
-		executor(minishell, minishell->command);
-		free(minishell->input);
-	}
-}
