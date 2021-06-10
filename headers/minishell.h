@@ -177,7 +177,7 @@ void	left_right(t_minishell *sh, t_key key);
 void	eof_home_end(t_minishell *sh, t_key key);
 void	copy_paste(t_minishell *sh, t_key key);
 void	up_down(t_minishell *sh, t_key key);
-void	execute_semicols(t_minishell *minishell);
+void	execute_semicols(t_minishell *minishell, char *o_input);
 
 int		first_check(t_minishell *minishell, char *input);
 void	adjust_prompt(t_minishell *minishell);
@@ -193,6 +193,5 @@ char	**safe_split(char *input, char del);
 char	*parse_wildcards(char *input);
 int		adjust_root(char **root);
 
-char    *parse_priorities(char *input);
-
+void	parse_priorities(t_minishell *sh);
 #endif

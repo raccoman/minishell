@@ -37,6 +37,7 @@ int		ft_count(char *string, int c);
 int		ft_is_num(const char *str);
 int		ft_atoi(const char *num);
 int		ft_strlen(const char *str);
+int		ft_strlen_skipspaces(char *string);
 char	*ft_strdup(char *str);
 char	*ft_strndup(char *str, int size);
 int		ft_strcmp(char *str1, char *str2);

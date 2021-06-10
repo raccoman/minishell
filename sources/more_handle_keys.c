@@ -34,6 +34,24 @@ void	adjust_prompt(t_minishell *minishell)
 	}
 }
 
+int	check_par(char *string, int previous)
+{
+	int	lvl;
+
+	lvl = 0;
+	while (*string)
+	{
+		if (*string == '(')
+			lvl++;
+		if (*string == ')')
+			lvl--;
+		string++;
+	}
+	if (lvl)
+		return (2);
+	return (previous);
+}
+
 int	first_check(t_minishell *minishell, char *input)
 {
 	int	check;
@@ -41,15 +59,18 @@ int	first_check(t_minishell *minishell, char *input)
 	if (input)
 	{
 		check = check_quote(minishell->input);
-		if (!check || check == -1)
+		check = check_par(minishell->input, check);
+		if (!check || check == -1 || check == 2)
 		{
 			add_history(minishell, minishell->input);
 			free(minishell->input);
 			minishell->input = NULL;
 			if (!check)
 				print_error("syntax error", "missing quote");
-			else
+			else if (check == -1)
 				print_error("syntax error", "escape at the end of line");
+			else
+				print_error("syntax error", "missing bracket");
 		}
 		else
 			return (1);

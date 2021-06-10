@@ -125,13 +125,12 @@ void	handle_enter(t_minishell *minishell)
 	{
 		add_history(minishell, minishell->input);
 		minishell->input = parse_wildcards(minishell->input);
-
-		minishell->o_input = ft_strdup(minishell->input);
-		minishell->input = parse_priorities(minishell->input);
-
+		parse_priorities(minishell);
 		minishell->semicols = safe_split(minishell->input, ';');
 		free(minishell->input);
-		execute_semicols(minishell);
+		execute_semicols(minishell, minishell->o_input);
+		free(minishell->o_input);
+		minishell->o_input = NULL;
 		ft_free2D((void **)minishell->semicols);
 		minishell->semicols = NULL;
 		minishell->input = NULL;

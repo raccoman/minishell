@@ -15,6 +15,8 @@
 void	terminate(t_minishell *minishell)
 {
 	free(minishell->input);
+	if (minishell->o_input)
+		free(minishell->o_input);
 	ft_free2D((void **)minishell->semicols);
 	free(minishell->prompt);
 	free(minishell->clipboard);

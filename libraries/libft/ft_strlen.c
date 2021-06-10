@@ -23,3 +23,15 @@ int	ft_strlen(const char *str)
 		i++;
 	return (i);
 }
+
+int	ft_strlen_skipspaces(char *string)
+{
+	char	*safe;
+	int		len;
+
+	safe = ft_strdup(string);
+	ft_replace(&safe, " ", NULL);
+	len = ft_strlen(safe);
+	free(safe);
+	return (len);
+}
