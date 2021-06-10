@@ -42,10 +42,8 @@ void	clear_commands(t_command *command)
 
 void	add_command(t_command *command, t_simple_cmd *s_cmd)
 {
-	int				i;
 	t_simple_cmd	*list_copy;
 
-	i = 0;
 	if (!command->s_commands)
 	{
 		command->s_commands = s_cmd;

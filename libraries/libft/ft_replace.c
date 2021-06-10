@@ -20,14 +20,14 @@ void	ft_replace(char **string, char *match, char *replacement)
 
 	i = 0;
 	new = NULL;
-	ft_append(new, 0);
 	while ((*string)[i])
 	{
 		if (!ft_strncmp((*string) + i, match, ft_strlen(match)))
 		{
 			safe = new;
 			new = ft_strjoin(new, replacement);
-			free(safe);
+			if (safe)
+				free(safe);
 			i += ft_strlen(match);
 		}
 		else
