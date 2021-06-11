@@ -97,7 +97,6 @@ void	execute_semicols(t_minishell *minishell, char *o_input)
 				&& ((and_or == 2 && !status) || (and_or == 1 && status)))
 			{
 				o_input += skip_block(o_input, &i);
-				i++;
 				continue ;
 			}
 			if (*(o_input - 1) == ')')

@@ -30,25 +30,22 @@ int	ft_count(char *string, int c)
 
 int	ft_count_str(char *string, char *in)
 {
-	int	i;
-	int	k;
-	int	j;
 	int	count;
+	int	len;
 
 	if (!string || !in)
 		return (0);
-	i = 0;
+	len = ft_strlen(in);
 	count = 0;
-	while (string[i])
+	while (*string)
 	{
-		j = i;
-		k = 0;
-		while (string[i] && string[i] == in[k++])
-			i++;
-		if (!in[k])
+		if (!ft_strncmp(string, in, len))
+		{
 			count++;
-		if (j == i)
-			i++;
+			string += len;
+		}
+		else
+			string++;
 	}
 	return (count);
 }
