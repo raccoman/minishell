@@ -39,7 +39,8 @@ char	**expected_cmd(char **splitted, char del)
 	error_msg = ft_strdup("expected command before '");
 	error_msg = ft_append(error_msg, del);
 	error_msg = ft_append(error_msg, '\'');
-	print_error("syntax error", error_msg);
+	if (del != ' ')
+		print_error("syntax error", error_msg);
 	free(error_msg);
 	ft_free2D((void **)splitted);
 	splitted = NULL;

@@ -17,6 +17,7 @@ void	reset_input(t_minishell *minishell)
 	if (minishell->input)
 		free(minishell->input);
 	minishell->input = ft_strdup("");
+	adjust_prompt(minishell);
 	prompt(minishell, "");
 	minishell->cursor = 0;
 }

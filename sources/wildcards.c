@@ -118,7 +118,7 @@ char	*parse_wildcards(char *input)
 	char	**split;
 
 	i = 0;
-	split = ft_split(input, ' ');
+	split = safe_split(input, ' ');
 	free(input);
 	while (split && split[i] != NULL)
 	{
